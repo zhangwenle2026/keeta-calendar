@@ -75,7 +75,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflo
 .hero-content{
   position:relative;z-index:2;text-align:center;
   display:flex;flex-direction:column;align-items:center;
-  gap:12px;margin-top:-80px;
+  gap:16px;margin-top:0;
+  padding-bottom:80px;
 }
 .hero-title{
   font-family:var(--font-serif);font-weight:900;
@@ -87,29 +88,37 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflo
   font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:1px;
 }
 .hero-cards{
-  position:absolute;bottom:40px;left:0;right:0;z-index:2;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
-  max-width:900px;margin:0 auto;padding:0 40px;
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  display:flex;flex-direction:row;gap:0;
+  width:100%;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(18px);
+  border-top:1px solid rgba(255,255,255,0.08);
 }
 .country-card{
-  background:rgba(0,0,0,0.38);backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.14);border-radius:14px;
-  padding:18px 14px 16px;cursor:pointer;text-align:center;
-  transition:all .3s;overflow:hidden;position:relative;
+  flex:1;min-width:0;
+  background:transparent;
+  border:none;
+  border-right:1px solid rgba(255,255,255,0.07);
+  border-radius:0;
+  padding:14px 8px 12px;cursor:pointer;text-align:center;
+  transition:all .25s;overflow:hidden;position:relative;
 }
+.country-card:last-child{border-right:none}
 .country-card::after{
   content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;
-  background:linear-gradient(to right,transparent,rgba(255,255,255,0.07),transparent);
+  background:linear-gradient(to right,transparent,rgba(255,255,255,0.08),transparent);
   transform:skewX(-20deg);transition:left .5s;
 }
 .country-card:hover::after{left:125%}
 .country-card:hover{
-  background:rgba(0,0,0,0.55);border-color:rgba(255,255,255,0.35);
-  transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5);
+  background:rgba(255,255,255,0.07);
+  transform:none;
 }
-.cc-flag{font-size:28px;display:block;margin-bottom:6px}
-.cc-name{font-size:12px;font-weight:600;color:white;letter-spacing:.5px;display:block}
-.cc-city{font-size:10px;color:rgba(255,255,255,0.45);font-family:var(--font-baskerville);font-style:italic;display:block;margin-top:2px}
+.country-card.active{background:rgba(255,255,255,0.12);border-bottom:2px solid var(--orange);}
+.cc-flag{font-size:22px;display:block;margin-bottom:4px}
+.cc-name{font-size:11px;font-weight:600;color:white;letter-spacing:.4px;display:block}
+.cc-city{font-size:9px;color:rgba(255,255,255,0.4);font-family:var(--font-baskerville);font-style:italic;display:block;margin-top:1px}
 
 /* ===== HERO COUNTRY ===== */
 #hero-country{
