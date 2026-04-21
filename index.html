@@ -1,562 +1,574 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keeta Holiday Calendar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F5F5F7;--white:#FFFFFF;--border:#E0E0E5;
-  --orange:#FF6900;--orange-bg:rgba(255,105,0,.10);--orange-ring:rgba(255,105,0,.18);
-  --text:#1D1D1F;--text2:#6E6E73;--text3:#AEAEB2;
-  --r:12px;--rs:8px;
-  --sh:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
-  --sh2:0 4px 16px rgba(0,0,0,.10),0 12px 32px rgba(0,0,0,.07);
+  --font-serif:'Playfair Display',Georgia,serif;
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --color-text:#1D1D1F;--color-text2:#6E6E73;--color-border:#E5E5EA;
+  --color-bg:#F8F8FA;--color-white:#FFFFFF;--color-today:#FF6B35;
 }
 html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--text3)}
-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.hdr-brand{display:flex;flex-direction:column;gap:2px}
-.hdr-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.2px;white-space:nowrap}
-.hdr-sub{font-size:11px;color:var(--text2)}
-.hdr-ctrl{display:flex;align-items:center;gap:10px}
-.pill-grp{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px;gap:2px}
-.pill-btn{padding:5px 16px;border:none;border-radius:16px;background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s ease;font-family:inherit;white-space:nowrap}
-.pill-btn.active{background:var(--text);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18)}
-.pill-btn:hover:not(.active){background:rgba(0,0,0,.05);color:var(--text)}
-.wrap{max-width:1440px;margin:0 auto;padding:28px 32px 60px;display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
-@media(max-width:1100px){.wrap{grid-template-columns:1fr}.sidebar{order:-1}}
-@media(max-width:768px){header{padding:0 16px;height:56px}.wrap{padding:16px 16px 40px;gap:16px}.hdr-sub{display:none}}
-.sec-lbl{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
-.country-bar{position:sticky;top:64px;z-index:99;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:10px 32px}
-@media(max-width:768px){.country-bar{top:56px;padding:8px 16px}}
-.filter-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:0;scrollbar-width:none}
-.filter-bar::-webkit-scrollbar{display:none}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:var(--white);border:1px solid var(--border);cursor:pointer;font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;flex-shrink:0;transition:all .2s ease;font-family:inherit}
-.chip:hover{background:#F0F0F5}
-.chip.active{background:var(--text);color:#fff;border-color:var(--text)}
-.chip-flag{font-size:16px;line-height:1}
-.ov-section{margin-bottom:28px}
-.ov-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
-.ov-scroll::-webkit-scrollbar{display:none}
-.ov-card{flex-shrink:0;width:210px;background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);cursor:pointer;transition:all .2s ease;overflow:hidden}
-.ov-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
-.ov-card.active{border-color:var(--text);box-shadow:0 0 0 2px var(--text),var(--sh2)}
-.ov-head{padding:14px 14px 10px;display:flex;align-items:center;justify-content:space-between}
-.ov-ci{display:flex;align-items:center;gap:8px}
-.ov-flag{font-size:24px;line-height:1}
-.ov-cname{font-size:14px;font-weight:600;color:var(--text)}
-.ov-total{font-size:11px;color:var(--text2);background:var(--bg);padding:2px 8px;border-radius:10px;white-space:nowrap}
-.ov-sep{height:1px;background:var(--border);margin:0 14px}
-.ov-list{padding:8px 0 12px}
-.ov-item{display:flex;align-items:stretch;padding:5px 14px;gap:10px}
-.ov-bar{width:3px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:16px}
-.ov-ic{flex:1;min-width:0}
-.ov-idate{font-size:10px;color:var(--text2);font-variant-numeric:tabular-nums;margin-bottom:1px}
-.ov-iname{font-size:12px;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.months-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.mc{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:18px;transition:all .2s ease}
-.mc:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
-.mc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.mc-name{font-size:15px;font-weight:700;color:var(--text)}
-.mc-badge{font-size:11px;color:var(--text2);background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:10px}
-.mc-badge.has{color:var(--orange);border-color:rgba(255,105,0,.25);background:var(--orange-bg)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
-.cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--text3);padding:4px 0 6px;letter-spacing:.3px}
-.cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--rs);cursor:default;transition:all .2s ease;user-select:none}
-.cal-day.other{opacity:.25}
-.day-num{font-size:12px;font-weight:400;color:var(--text);line-height:1;position:relative;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%}
-.cal-day.weekend .day-num{color:#EF4444}
-.cal-day.other .day-num{color:var(--text3)}
-.cal-day.is-today .day-num{background:var(--orange);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(255,105,0,.35)}
-.cal-day.has-h{cursor:pointer}
-.cal-day.has-h .day-num{font-weight:600}
-.day-bg{position:absolute;inset:1px;border-radius:7px;z-index:0;transition:filter .2s ease}
-.cal-day.has-h:hover .day-bg{filter:brightness(.9)}
-.cal-day.has-h:hover{transform:scale(1.08);z-index:10}
-.cal-day.sk-start .day-bg{border-radius:7px 0 0 7px;right:-1px}
-.cal-day.sk-mid .day-bg{border-radius:0;left:-1px;right:-1px}
-.cal-day.sk-end .day-bg{border-radius:0 7px 7px 0;left:-1px}
-.day-dots{position:absolute;bottom:3px;display:flex;gap:2px;z-index:2}
-.ddot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
-.cal-tt{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--white);border:1px solid var(--border);border-radius:10px;padding:10px 12px;z-index:500;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.08);min-width:150px;max-width:230px;white-space:normal}
-.cal-tt::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--white)}
-.cal-tt::before{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(1px);border:7px solid transparent;border-top-color:var(--border)}
-.cal-day:hover .cal-tt{display:block}
-.tt-date{font-size:10px;color:var(--text2);margin-bottom:6px;font-variant-numeric:tabular-nums}
-.tt-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0}
-.tt-row+.tt-row{border-top:1px solid var(--border)}
-.tt-flag{font-size:14px;flex-shrink:0;line-height:1.4}
-.tt-name{font-size:12px;color:var(--text);font-weight:500;line-height:1.4}
-.sidebar{display:flex;flex-direction:column;gap:16px}
-.sc{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:18px}
-.sc-ttl{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat-box{background:var(--bg);border-radius:var(--rs);padding:12px;border:1px solid var(--border)}
-.stat-val{font-size:22px;font-weight:700;color:var(--text)}
-.stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
-.up-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
-.up-item:last-child{border-bottom:none}
-.up-item.today-hl{background:var(--orange-bg);border-radius:var(--rs);padding:9px 10px;margin:2px -4px}
-.up-db{text-align:center;min-width:44px;background:var(--bg);border-radius:var(--rs);padding:6px 8px;border:1px solid var(--border);flex-shrink:0}
-.up-mo{font-size:9px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px}
-.up-dy{font-size:20px;font-weight:700;color:var(--text);line-height:1.1}
-.up-inf{flex:1;min-width:0}
-.up-nm{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.up-co{font-size:11px;color:var(--text2);margin-top:2px}
-.up-tag{font-size:11px;font-weight:600;color:var(--text2);flex-shrink:0;white-space:nowrap}
-.up-tag.t{color:var(--orange)}
-.sw{position:relative;margin-bottom:12px}
-.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
-.search-input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:all .2s ease}
-.search-input::placeholder{color:var(--text3)}
-.search-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,105,0,.10);background:var(--white)}
-.h-list{max-height:380px;overflow-y:auto}
-.h-item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border);transition:background .15s;border-radius:var(--rs)}
-.h-item:last-child{border-bottom:none}
-.h-item:hover{background:var(--bg)}
-.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.h-inf{flex:1;min-width:0}
-.h-nm{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.h-mt{font-size:11px;color:var(--text2);margin-top:1px;display:flex;gap:6px;align-items:center}
-.empty{text-align:center;padding:32px 16px;color:var(--text2);font-size:13px}
-.empty-icon{font-size:32px;margin-bottom:10px}
-[dir=rtl] .cal-tt{left:auto;right:50%;transform:translateX(50%)}
-[dir=rtl] .cal-tt::after{left:auto;right:50%;transform:translateX(50%)}
-[dir=rtl] .cal-tt::before{left:auto;right:50%;transform:translateX(50%) translateY(1px)}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);overflow-x:hidden}
+/* HEADER */
+#site-header{position:absolute;top:0;left:0;width:100%;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:transparent;z-index:200;transition:background .3s,box-shadow .3s}
+#site-header.sticky{position:fixed;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--color-border);box-shadow:0 1px 8px rgba(0,0,0,.04)}
+.header-brand{font-family:var(--font-serif);font-size:15px;font-weight:700;color:white;letter-spacing:.02em;transition:color .3s;white-space:nowrap}
+#site-header.sticky .header-brand{color:var(--color-text)}
+.header-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-select{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:white;padding:5px 26px 5px 10px;border-radius:8px;font-family:var(--font-sans);font-size:12px;font-weight:500;cursor:pointer;transition:background .3s,border-color .3s,color .3s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+#site-header.sticky .header-select{background-color:var(--color-bg);border-color:var(--color-border);color:var(--color-text);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231D1D1F' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.header-select:focus{outline:none}
+.lang-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:white;padding:5px 10px;border-radius:8px;font-family:var(--font-sans);font-size:12px;font-weight:500;cursor:pointer;transition:background .3s,border-color .3s,color .3s}
+.lang-btn.active{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.7)}
+#site-header.sticky .lang-btn{background:var(--color-bg);border-color:var(--color-border);color:var(--color-text)}
+#site-header.sticky .lang-btn.active{background:var(--color-text);color:white;border-color:var(--color-text)}
+/* HERO */
+#hero{position:relative;width:100%;height:70vh;min-height:500px;overflow:hidden;background:#1a1a2e}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease;background:#1a1a2e}
+.hero-img.active{opacity:1}
+.hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.3) 100%);z-index:2;pointer-events:none}
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;text-align:center;padding:0 24px}
+.hero-title{font-family:var(--font-serif);font-size:clamp(40px,6vw,80px);font-weight:700;color:white;text-shadow:0 2px 20px rgba(0,0,0,.4);line-height:1.1;letter-spacing:-.01em}
+.hero-subtitle{margin-top:16px;font-family:var(--font-sans);font-size:18px;font-weight:300;color:rgba(255,255,255,.7);letter-spacing:.05em;text-transform:uppercase}
+/* COUNTRY FILTER */
+#country-filter{background:var(--color-white);padding:16px 32px;border-bottom:1px solid var(--color-border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#country-filter::-webkit-scrollbar{display:none}
+.country-chips{display:flex;gap:8px;width:max-content}
+.country-chip{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;border:1px solid var(--color-border);background:var(--color-white);cursor:pointer;font-family:var(--font-sans);font-size:13px;font-weight:500;color:var(--color-text);white-space:nowrap;transition:background .2s,color .2s,border-color .2s,transform .15s;user-select:none}
+.country-chip:hover{transform:translateY(-1px);border-color:#999}
+.country-chip.active{background:var(--color-text);color:white;border-color:var(--color-text)}
+.chip-flag{font-size:17px}
+/* OVERVIEW */
+#overview-section{background:var(--color-white);padding:32px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#overview-section::-webkit-scrollbar{display:none}
+.overview-cards{display:flex;gap:16px;width:max-content}
+.overview-card{width:240px;background:var(--color-white);border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:20px;flex-shrink:0;transition:transform .2s,box-shadow .2s;cursor:default}
+.overview-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.card-flag{font-size:30px;line-height:1}
+.card-country-name{font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--color-text)}
+.card-divider{height:1px;background:var(--color-border);margin-bottom:14px}
+.card-holiday-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.card-holiday-item{display:flex;align-items:flex-start;gap:8px;font-size:12px}
+.card-holiday-bar{width:3px;height:30px;border-radius:2px;flex-shrink:0;margin-top:1px}
+.card-holiday-info{flex:1;min-width:0}
+.card-holiday-date{color:var(--color-text2);font-size:11px;font-weight:400;line-height:1.3}
+.card-holiday-name{color:var(--color-text);font-weight:500;font-size:12px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-footer{font-size:11px;color:var(--color-text2);border-top:1px solid var(--color-border);padding-top:10px}
+/* MAIN LAYOUT */
+#main-content{display:flex;align-items:flex-start;background:var(--color-bg)}
+#calendar-section{flex:1;min-width:0;padding:32px}
+.calendar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.month-card{background:var(--color-white);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:20px;overflow:visible}
+.month-title{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--color-text);margin-bottom:16px;text-align:left}
+.weekday-header{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.weekday-label{text-align:center;font-size:10px;font-weight:500;color:#AEAEB2;text-transform:uppercase;letter-spacing:.04em;padding:4px 0}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.day-cell{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;border-radius:6px;transition:background .15s,transform .15s;padding:2px;min-height:30px}
+.day-cell:not(.empty):hover{background:rgba(0,0,0,.04);transform:scale(1.05);z-index:10}
+.day-cell.empty{pointer-events:none}
+.day-number{font-size:12px;font-weight:400;color:var(--color-text);line-height:1;z-index:1;position:relative}
+.day-cell.has-holiday .day-number{font-weight:700}
+.day-cell.today .day-number{color:white;font-weight:700}
+.today-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--color-today);z-index:0}
+.day-dots{display:flex;gap:2px;margin-top:2px;z-index:1;position:relative;height:5px;align-items:center;justify-content:center}
+.day-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.day-holiday-bar{position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:0 2px 2px 0;z-index:1}
+/* Tooltip */
+.tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:white;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.18);padding:12px 14px;min-width:160px;max-width:220px;z-index:100;pointer-events:none}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:white}
+.day-cell:not(.empty):hover .tooltip{display:block}
+.tooltip-holiday{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:var(--color-text)}
+.tooltip-holiday+.tooltip-holiday{border-top:1px solid var(--color-border);margin-top:4px;padding-top:8px}
+.tooltip-flag{font-size:14px;flex-shrink:0;margin-top:1px}
+.tooltip-name{font-weight:500;line-height:1.35;white-space:normal}
+/* SIDEBAR */
+#sidebar{width:280px;flex-shrink:0;padding:32px 24px 32px 0;position:sticky;top:76px;max-height:calc(100vh - 76px);overflow-y:auto;scrollbar-width:none}
+#sidebar::-webkit-scrollbar{display:none}
+.sidebar-section{background:var(--color-white);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:20px}
+.sidebar-title{font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--color-text);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--color-border)}
+.upcoming-list{list-style:none;display:flex;flex-direction:column}
+.upcoming-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F5F5F7}
+.upcoming-item:last-child{border-bottom:none}
+.upcoming-item.today-item{background:rgba(255,107,53,.06);border-radius:8px;padding:9px 8px;margin:2px -8px}
+.upcoming-flag{font-size:14px;flex-shrink:0}
+.upcoming-info{flex:1;min-width:0}
+.upcoming-date{font-size:10px;color:var(--color-text2);font-weight:400;line-height:1.2}
+.upcoming-name{font-weight:500;color:var(--color-text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upcoming-item.today-item .upcoming-date{color:var(--color-today);font-weight:600}
+/* RESPONSIVE */
+@media(max-width:900px){#sidebar{display:none}#calendar-section,#overview-section{padding:20px 16px}#country-filter{padding:12px 16px}#site-header{padding:0 16px}}
+@media(max-width:640px){#hero{height:50vh;min-height:320px}.hero-title{font-size:clamp(28px,8vw,48px)}.header-brand{font-size:12px}.calendar-grid{grid-template-columns:1fr}}
+/* RTL */
+[dir="rtl"] .day-holiday-bar{left:auto;right:0;border-radius:2px 0 0 2px}
+[dir="rtl"] .card-header{flex-direction:row-reverse;text-align:right}
+[dir="rtl"] .upcoming-item{flex-direction:row-reverse}
+[dir="rtl"] .tooltip-holiday{flex-direction:row-reverse}
+[dir="rtl"] .month-title{text-align:right}
+[dir="rtl"] .tooltip{left:auto;right:50%;transform:translateX(50%)}
+[dir="rtl"] .tooltip::after{left:auto;right:50%;transform:translateX(50%)}
 </style>
 </head>
 <body>
-<header>
-  <div class="hdr-brand">
-    <div class="hdr-title">🗓️ Keeta Holiday Calendar</div>
-    <div class="hdr-sub" id="hdrSub">Holiday Calendar · Calendário · تقويم العطل</div>
-  </div>
-  <div class="hdr-ctrl">
-    <div class="pill-grp" id="yearGrp">
-      <button class="pill-btn active" data-year="2026">2026</button>
-      <button class="pill-btn" data-year="2027">2027</button>
-    </div>
-    <div class="pill-grp" id="langGrp">
-      <button class="pill-btn active" data-lang="zh">中文</button>
-      <button class="pill-btn" data-lang="en">EN</button>
-      <button class="pill-btn" data-lang="pt">PT</button>
-      <button class="pill-btn" data-lang="ar">AR</button>
-    </div>
+<header id="site-header">
+  <div class="header-brand" id="header-brand">Keeta Holiday Calendar</div>
+  <div class="header-controls">
+    <select class="header-select" id="year-select"></select>
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="pt">PT</button>
+    <button class="lang-btn" data-lang="ar">AR</button>
   </div>
 </header>
-<div class="country-bar">
-  <div class="filter-bar" id="filterBar"></div>
+<section id="hero">
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <h1 class="hero-title" id="hero-title">Keeta 假期日历</h1>
+    <p class="hero-subtitle" id="hero-subtitle">全部市场</p>
+  </div>
+</section>
+<div id="country-filter">
+  <div class="country-chips" id="country-chips"></div>
 </div>
-<div class="wrap">
-  <div class="content-col">
-    <div class="ov-section">
-      <div class="sec-lbl" id="lblOv">Country Overview</div>
-      <div class="ov-scroll" id="ovScroll"></div>
+<section id="overview-section">
+  <div class="overview-cards" id="overview-cards"></div>
+</section>
+<div id="main-content">
+  <section id="calendar-section">
+    <div class="calendar-grid" id="calendar-grid"></div>
+  </section>
+  <aside id="sidebar">
+    <div class="sidebar-section">
+      <h3 class="sidebar-title" id="sidebar-upcoming-title">即将到来的节假日</h3>
+      <ul class="upcoming-list" id="upcoming-list"></ul>
     </div>
-    <div class="sec-lbl" id="lblCal">Monthly Calendar</div>
-    <div class="months-grid" id="monthsGrid"></div>
-  </div>
-  <div class="sidebar">
-    <div class="sc">
-      <div class="sc-ttl" id="lblStats">Statistics</div>
-      <div class="stats-grid" id="statsGrid"></div>
-    </div>
-    <div class="sc">
-      <div class="sc-ttl" id="lblUp">Upcoming Holidays</div>
-      <div id="upList"></div>
-    </div>
-    <div class="sc">
-      <div class="sc-ttl" id="lblAll">All Holidays</div>
-      <div class="sw">
-        <svg class="si" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" id="searchInput" type="text" placeholder="Search...">
-      </div>
-      <div class="h-list" id="hList"></div>
-    </div>
-  </div>
+  </aside>
 </div>
 <script src="holidays-data.js"></script>
 <script>
 const COUNTRIES=[
-  {code:'CN',flag:'🇨🇳',color:'#EF4444',name:{zh:'中国',en:'China',pt:'China',ar:'الصين'}},
-  {code:'BR',flag:'🇧🇷',color:'#22C55E',name:{zh:'巴西',en:'Brazil',pt:'Brasil',ar:'البرازيل'}},
-  {code:'HK',flag:'🇭🇰',color:'#8B5CF6',name:{zh:'香港',en:'Hong Kong',pt:'Hong Kong',ar:'هونغ كونغ'}},
-  {code:'SA',flag:'🇸🇦',color:'#F59E0B',name:{zh:'沙特',en:'Saudi Arabia',pt:'Arábia Saudita',ar:'المملكة العربية السعودية'}},
-  {code:'AE',flag:'🇦🇪',color:'#06B6D4',name:{zh:'阿联酋',en:'UAE',pt:'Emirados Árabes',ar:'الإمارات'}},
-  {code:'QA',flag:'🇶🇦',color:'#EC4899',name:{zh:'卡塔尔',en:'Qatar',pt:'Catar',ar:'قطر'}},
-  {code:'KW',flag:'🇰🇼',color:'#10B981',name:{zh:'科威特',en:'Kuwait',pt:'Kuwait',ar:'الكويت'}},
-  {code:'BH',flag:'🇧🇭',color:'#F97316',name:{zh:'巴林',en:'Bahrain',pt:'Bahrein',ar:'البحرين'}},
+  {code:'ALL',flag:'🌍',zh:'全部',en:'All',pt:'Todos',ar:'الكل'},
+  {code:'CN',flag:'🇨🇳',zh:'中国',en:'China',pt:'China',ar:'الصين',color:'#EF4444'},
+  {code:'BR',flag:'🇧🇷',zh:'巴西',en:'Brazil',pt:'Brasil',ar:'البرازيل',color:'#22C55E'},
+  {code:'HK',flag:'🇭🇰',zh:'香港',en:'Hong Kong',pt:'Hong Kong',ar:'هونغ كونغ',color:'#8B5CF6'},
+  {code:'SA',flag:'🇸🇦',zh:'沙特',en:'Saudi Arabia',pt:'Arábia Saudita',ar:'السعودية',color:'#F59E0B'},
+  {code:'AE',flag:'🇦🇪',zh:'阿联酋',en:'UAE',pt:'Emirados Árabes',ar:'الإمارات',color:'#06B6D4'},
+  {code:'QA',flag:'🇶🇦',zh:'卡塔尔',en:'Qatar',pt:'Catar',ar:'قطر',color:'#EC4899'},
+  {code:'KW',flag:'🇰🇼',zh:'科威特',en:'Kuwait',pt:'Kuwait',ar:'الكويت',color:'#10B981'},
+  {code:'BH',flag:'🇧🇭',zh:'巴林',en:'Bahrain',pt:'Bahrein',ar:'البحرين',color:'#F97316'},
 ];
-const MON={
+const HERO_PHOTOS={
+  ALL:[
+    'https://images.pexels.com/photos/2412603/pexels-photo-2412603.jpeg',
+    'https://images.pexels.com/photos/2868242/pexels-photo-2868242.jpeg',
+    'https://images.pexels.com/photos/1559699/pexels-photo-1559699.jpeg',
+    'https://images.pexels.com/photos/3755440/pexels-photo-3755440.jpeg',
+    'https://images.pexels.com/photos/162031/dubai-tower-arab-khalifa-162031.jpeg',
+    'https://images.pexels.com/photos/4388164/pexels-photo-4388164.jpeg',
+    'https://images.pexels.com/photos/3522880/pexels-photo-3522880.jpeg',
+    'https://images.pexels.com/photos/5077064/pexels-photo-5077064.jpeg',
+  ],
+  CN:'https://images.pexels.com/photos/2412603/pexels-photo-2412603.jpeg',
+  BR:'https://images.pexels.com/photos/2868242/pexels-photo-2868242.jpeg',
+  HK:'https://images.pexels.com/photos/1559699/pexels-photo-1559699.jpeg',
+  SA:'https://images.pexels.com/photos/3755440/pexels-photo-3755440.jpeg',
+  AE:'https://images.pexels.com/photos/162031/dubai-tower-arab-khalifa-162031.jpeg',
+  QA:'https://images.pexels.com/photos/4388164/pexels-photo-4388164.jpeg',
+  KW:'https://images.pexels.com/photos/3522880/pexels-photo-3522880.jpeg',
+  BH:'https://images.pexels.com/photos/5077064/pexels-photo-5077064.jpeg',
+};
+const IMG_PARAMS='?auto=compress&cs=tinysrgb&w=1600&h=900&fit=crop';
+const TITLES={zh:'Keeta 假期日历',en:'Keeta Holiday Calendar',pt:'Calendário de Feriados Keeta',ar:'تقويم إجازات كيتا'};
+const SIDEBAR_LABELS={zh:'即将到来的节假日',en:'Upcoming Holidays',pt:'Próximos Feriados',ar:'الإجازات القادمة'};
+const MONTH_NAMES={
   zh:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
   en:['January','February','March','April','May','June','July','August','September','October','November','December'],
   pt:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
   ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
 };
-const DOW={
+const WEEKDAY_LABELS={
   zh:['日','一','二','三','四','五','六'],
   en:['Su','Mo','Tu','We','Th','Fr','Sa'],
-  pt:['Do','Se','Te','Qu','Qu','Se','Sá'],
-  ar:['ح','ن','ث','ر','خ','ج','س'],
+  pt:['Do','Se','Te','Qa','Qi','Sx','Sb'],
+  ar:['أح','اث','ثل','أر','خم','جم','سب'],
 };
-const T={
-  zh:{ov:'国家概览',cal:'月历',stats:'统计',up:'即将到来',all:'全部假期',search:'搜索假期…',total:'个假期',countries:'个国家',none:'暂无假期',days:'天后',today:'今日',tomorrow:'明天'},
-  en:{ov:'Country Overview',cal:'Monthly Calendar',stats:'Statistics',up:'Upcoming',all:'All Holidays',search:'Search holidays…',total:'holidays',countries:'countries',none:'No holidays',days:'days',today:'Today',tomorrow:'Tomorrow'},
-  pt:{ov:'Visão Geral',cal:'Calendário',stats:'Estatísticas',up:'Próximos',all:'Todos Feriados',search:'Buscar feriados…',total:'feriados',countries:'países',none:'Sem feriados',days:'dias',today:'Hoje',tomorrow:'Amanhã'},
-  ar:{ov:'نظرة عامة',cal:'التقويم',stats:'إحصاءات',up:'القادمة',all:'جميع العطل',search:'البحث…',total:'أيام عطلة',countries:'دول',none:'لا توجد عطل',days:'أيام',today:'اليوم',tomorrow:'غداً'},
-};
-let S={year:2026,lang:'zh',country:'ALL',search:''};
-const $=id=>document.getElementById(id);
+const TOTAL_LABELS={zh:n=>`共 ${n} 个假期`,en:n=>`${n} holidays total`,pt:n=>`${n} feriados`,ar:n=>`${n} إجازة`};
+const COUNTRY_ALL_LABELS={zh:'全部市场',en:'All Markets',pt:'Todos os Mercados',ar:'جميع الأسواق'};
 
-function todayStr(){
-  const d=new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+let currentLang='zh',currentCountry='ALL',currentYear=new Date().getFullYear();
+let heroSlideIndex=0,heroSlideTimer=null,heroImgEls=[];
+
+const todayD=new Date();todayD.setHours(0,0,0,0);
+function fmtDate(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`;}
+const todayStr=fmtDate(todayD);
+
+function cc(code){return COUNTRIES.find(c=>c.code===code);}
+
+function getHolidaysYear(year){
+  if(typeof HOLIDAYS_DATA==='undefined')return {};
+  const r={};
+  COUNTRIES.filter(c=>c.code!=='ALL').forEach(c=>{
+    const d=HOLIDAYS_DATA[c.code]&&HOLIDAYS_DATA[c.code][year];
+    if(d)r[c.code]=d;
+  });
+  return r;
 }
-function hexAlpha(hex,a){
-  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  return 'rgba('+r+','+g+','+b+','+a+')';
-}
-function getList(year,code){
-  if(!HOLIDAYS_DATA||!HOLIDAYS_DATA[code]||!HOLIDAYS_DATA[code][year]) return [];
-  return HOLIDAYS_DATA[code][year];
-}
-function buildDateMap(year,activeCountry){
-  const map={};
-  const codes=activeCountry==='ALL'?COUNTRIES.map(c=>c.code):[activeCountry];
+
+function buildHolidayMap(year,filterCode){
+  const map={},allData=getHolidaysYear(year);
+  const codes=filterCode==='ALL'?Object.keys(allData):[filterCode];
   codes.forEach(code=>{
-    const ci=COUNTRIES.find(c=>c.code===code);
-    getList(year,code).forEach(h=>{
-      if(!map[h.date]) map[h.date]=[];
-      map[h.date].push({code,flag:ci.flag,color:ci.color,name:h.name});
+    const country=cc(code);
+    if(!country||!allData[code])return;
+    allData[code].forEach(h=>{
+      if(!map[h.date])map[h.date]=[];
+      map[h.date].push({code,flag:country.flag,color:country.color,name:h.name});
     });
   });
   return map;
 }
 
-// streak detection: returns map of date -> 'start'|'mid'|'end'|'single' per country
-function buildStreakMap(year,code){
-  const list=getList(year,code);
-  const dates=list.map(h=>h.date).sort();
-  const result={};
-  let i=0;
-  while(i<dates.length){
-    let j=i;
-    while(j+1<dates.length){
-      const a=new Date(dates[j]),b=new Date(dates[j+1]);
-      const diff=(b-a)/(1000*60*60*24);
-      if(diff===1) j++;
-      else break;
-    }
-    const len=j-i+1;
-    if(len===1) result[dates[i]]='single';
-    else {
-      result[dates[i]]='start';
-      for(let k=i+1;k<j;k++) result[dates[k]]='mid';
-      result[dates[j]]='end';
-    }
-    i=j+1;
+function hName(h){return h.name[currentLang]||h.name.en||h.name.zh||'';}
+
+function fmtDisplay(dateStr){
+  const[,m,d]=dateStr.split('-');
+  return `${parseInt(d)} ${MONTH_NAMES[currentLang][parseInt(m)-1]}`;
+}
+
+// HERO
+function initHeroImages(){
+  const hero=document.getElementById('hero');
+  heroImgEls.forEach(el=>el.remove());
+  heroImgEls=[];
+  HERO_PHOTOS.ALL.forEach((url,i)=>{
+    const img=document.createElement('img');
+    img.className='hero-img';
+    img.src=url+IMG_PARAMS;
+    img.alt='';
+    img.loading=i===0?'eager':'lazy';
+    if(i===0)img.classList.add('active');
+    hero.insertBefore(img,hero.querySelector('.hero-gradient'));
+    heroImgEls.push(img);
+  });
+  heroSlideIndex=0;
+}
+
+function showHeroSlide(i){
+  heroImgEls.forEach((el,j)=>el.classList.toggle('active',j===i));
+  heroSlideIndex=i;
+}
+
+function startAutoplay(){
+  stopAutoplay();
+  heroSlideTimer=setInterval(()=>{showHeroSlide((heroSlideIndex+1)%heroImgEls.length);},5000);
+}
+function stopAutoplay(){if(heroSlideTimer){clearInterval(heroSlideTimer);heroSlideTimer=null;}}
+
+function setHeroForCountry(code){
+  if(code==='ALL'){
+    HERO_PHOTOS.ALL.forEach((url,i)=>{heroImgEls[i].src=url+IMG_PARAMS;});
+    showHeroSlide(0);startAutoplay();
+  } else {
+    stopAutoplay();
+    heroImgEls[0].src=HERO_PHOTOS[code]+IMG_PARAMS;
+    heroImgEls.forEach((el,i)=>el.classList.toggle('active',i===0));
+    heroSlideIndex=0;
   }
-  return result;
 }
 
-function renderFilter(){
-  const el=$('filterBar');
-  el.innerHTML='';
-  const makeChip=(label,flag,code)=>{
-    const b=document.createElement('button');
-    b.className='chip'+(S.country===code?' active':'');
-    b.innerHTML=(flag?'<span class="chip-flag">'+flag+'</span> ':'')+label;
-    b.onclick=()=>{S.country=code;renderAll()};
-    el.appendChild(b);
-  };
-  const allLabel=S.lang==='zh'?'全部':S.lang==='ar'?'الكل':S.lang==='pt'?'Todos':'All';
-  makeChip(allLabel,'🌍','ALL');
-  COUNTRIES.forEach(c=>makeChip(c.name[S.lang],c.flag,c.code));
+// STICKY HEADER
+function initStickyHeader(){
+  const header=document.getElementById('site-header');
+  const hero=document.getElementById('hero');
+  function onScroll(){
+    const heroBottom=hero.getBoundingClientRect().bottom;
+    if(heroBottom<=0){header.classList.add('sticky');}
+    else{header.classList.remove('sticky');}
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
 }
 
-function renderOverview(dateMap){
-  $('lblOv').textContent=T[S.lang].ov;
-  const sc=$('ovScroll');
-  sc.innerHTML='';
-  const today=todayStr();
-  COUNTRIES.forEach(ci=>{
-    const list=getList(S.year,ci.code);
-    const future=list.filter(h=>h.date>=today).slice(0,5);
+// YEAR SELECT
+function initYearSelect(){
+  const sel=document.getElementById('year-select');
+  const thisYear=new Date().getFullYear();
+  for(let y=thisYear-1;y<=thisYear+2;y++){
+    const opt=document.createElement('option');
+    opt.value=y;opt.textContent=y;
+    if(y===currentYear)opt.selected=true;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener('change',()=>{currentYear=parseInt(sel.value);renderAll();});
+}
+
+// LANG BUTTONS
+function initLangButtons(){
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      currentLang=btn.dataset.lang;
+      document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
+      if(currentLang==='ar'){document.documentElement.dir='rtl';document.documentElement.lang='ar';}
+      else{document.documentElement.dir='ltr';document.documentElement.lang=currentLang;}
+      renderAll();
+    });
+  });
+}
+
+// COUNTRY CHIPS
+function renderCountryChips(){
+  const container=document.getElementById('country-chips');
+  container.innerHTML='';
+  COUNTRIES.forEach(c=>{
+    const chip=document.createElement('button');
+    chip.className='country-chip'+(c.code===currentCountry?' active':'');
+    chip.innerHTML=`<span class="chip-flag">${c.flag}</span><span>${c[currentLang]}</span>`;
+    chip.addEventListener('click',()=>{
+      currentCountry=c.code;
+      renderCountryChips();
+      updateHeroSubtitle();
+      setHeroForCountry(c.code);
+      renderOverviewCards();
+      renderCalendar();
+      renderSidebar();
+    });
+    container.appendChild(chip);
+  });
+}
+
+function updateHeroSubtitle(){
+  const el=document.getElementById('hero-subtitle');
+  if(currentCountry==='ALL'){el.textContent=COUNTRY_ALL_LABELS[currentLang];}
+  else{const c=cc(currentCountry);el.textContent=c?c[currentLang]:'';}
+}
+
+// OVERVIEW CARDS
+function renderOverviewCards(){
+  const container=document.getElementById('overview-cards');
+  container.innerHTML='';
+  const allData=getHolidaysYear(currentYear);
+  const realCountries=COUNTRIES.filter(c=>c.code!=='ALL');
+  
+  realCountries.forEach(country=>{
+    const holidays=allData[country.code]||[];
+    const total=holidays.length;
+    
+    // get upcoming 5 from today
+    const upcoming=holidays.filter(h=>h.date>=todayStr).slice(0,5);
+    
     const card=document.createElement('div');
-    card.className='ov-card'+(S.country===ci.code?' active':'');
-    card.onclick=()=>{S.country=S.country===ci.code?'ALL':ci.code;renderAll()};
-    const totalTxt=ci.code==='CN'||S.lang==='zh'?'共'+list.length+T[S.lang].total:list.length+' '+T[S.lang].total;
-    let items='';
-    if(future.length===0){
-      items='<div style="padding:8px 14px;font-size:12px;color:var(--text2)">'+T[S.lang].none+'</div>';
+    card.className='overview-card';
+    
+    let itemsHtml='';
+    if(upcoming.length===0){
+      itemsHtml=`<li style="font-size:12px;color:var(--color-text2);padding:4px 0">—</li>`;
     } else {
-      future.forEach(h=>{
-        items+='<div class="ov-item"><div class="ov-bar" style="background:'+ci.color+'"></div><div class="ov-ic"><div class="ov-idate">'+h.date.slice(5).replace('-','/')+'</div><div class="ov-iname">'+(h.name[S.lang]||h.name.en)+'</div></div></div>';
+      upcoming.forEach(h=>{
+        itemsHtml+=`<li class="card-holiday-item">
+          <div class="card-holiday-bar" style="background:${country.color}"></div>
+          <div class="card-holiday-info">
+            <div class="card-holiday-date">${fmtDisplay(h.date)}</div>
+            <div class="card-holiday-name" title="${hName(h)}">${hName(h)}</div>
+          </div>
+        </li>`;
       });
     }
-    card.innerHTML='<div class="ov-head"><div class="ov-ci"><span class="ov-flag">'+ci.flag+'</span><span class="ov-cname">'+ci.name[S.lang]+'</span></div><span class="ov-total">'+totalTxt+'</span></div><div class="ov-sep"></div><div class="ov-list">'+items+'</div>';
-    sc.appendChild(card);
+    
+    card.innerHTML=`
+      <div class="card-header">
+        <span class="card-flag">${country.flag}</span>
+        <span class="card-country-name">${country[currentLang]}</span>
+      </div>
+      <div class="card-divider"></div>
+      <ul class="card-holiday-list">${itemsHtml}</ul>
+      <div class="card-footer">${TOTAL_LABELS[currentLang](total)}</div>
+    `;
+    container.appendChild(card);
   });
 }
 
-function renderMonths(dateMap){
-  $('lblCal').textContent=T[S.lang].cal;
-  const grid=$('monthsGrid');
+// CALENDAR
+function renderCalendar(){
+  const grid=document.getElementById('calendar-grid');
   grid.innerHTML='';
-  const today=todayStr();
-  const todayDate=new Date();
+  const holidayMap=buildHolidayMap(currentYear,currentCountry);
+  const wdLabels=WEEKDAY_LABELS[currentLang];
+  const mNames=MONTH_NAMES[currentLang];
 
-  // pre-build streak maps for single-country mode
-  const streakMaps={};
-  if(S.country!=='ALL'){
-    streakMaps[S.country]=buildStreakMap(S.year,S.country);
-  }
-
-  for(let m=0;m<12;m++){
-    const daysInMonth=new Date(S.year,m+1,0).getDate();
-    const firstDay=new Date(S.year,m,1).getDay();
-    const prevMonthDays=new Date(S.year,m,0).getDate();
-
-    // count holidays this month for badge
-    let hCount=0;
-    for(let d=1;d<=daysInMonth;d++){
-      const ds=S.year+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      if(dateMap[ds]) hCount++;
-    }
-
+  for(let month=0;month<12;month++){
     const card=document.createElement('div');
-    card.className='mc';
-    const badgeCls=hCount>0?'mc-badge has':'mc-badge';
-    const badgeTxt=hCount>0?(S.lang==='zh'?hCount+'个假期':hCount+' '+(hCount===1?'holiday':'holidays')):'–';
-    card.innerHTML='<div class="mc-head"><div class="mc-name">'+MON[S.lang][m]+'</div><span class="'+badgeCls+'">'+badgeTxt+'</span></div><div class="cal-grid" id="cg-'+S.year+'-'+m+'"></div>';
-    grid.appendChild(card);
-
-    const cg=card.querySelector('.cal-grid');
-    // DOW headers
-    DOW[S.lang].forEach(d=>{
-      const dh=document.createElement('div');
-      dh.className='cal-dow';
-      dh.textContent=d;
-      cg.appendChild(dh);
+    card.className='month-card';
+    
+    // Month title
+    const titleEl=document.createElement('div');
+    titleEl.className='month-title';
+    titleEl.textContent=mNames[month]+' '+currentYear;
+    card.appendChild(titleEl);
+    
+    // Weekday header
+    const wdRow=document.createElement('div');
+    wdRow.className='weekday-header';
+    wdLabels.forEach(wd=>{
+      const wdEl=document.createElement('div');
+      wdEl.className='weekday-label';
+      wdEl.textContent=wd;
+      wdRow.appendChild(wdEl);
     });
-
-    // Leading empty cells from prev month
+    card.appendChild(wdRow);
+    
+    // Days grid
+    const daysGrid=document.createElement('div');
+    daysGrid.className='days-grid';
+    
+    const firstDay=new Date(currentYear,month,1).getDay();
+    const totalDays=new Date(currentYear,month+1,0).getDate();
+    
+    // Empty cells before first day
     for(let i=0;i<firstDay;i++){
-      const dc=document.createElement('div');
-      dc.className='cal-day other';
-      const n=prevMonthDays-firstDay+1+i;
-      dc.innerHTML='<span class="day-num">'+n+'</span>';
-      cg.appendChild(dc);
+      const empty=document.createElement('div');
+      empty.className='day-cell empty';
+      daysGrid.appendChild(empty);
     }
-
-    // Days
-    for(let d=1;d<=daysInMonth;d++){
-      const ds=S.year+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      const dow=new Date(S.year,m,d).getDay();
-      const isToday=ds===today;
-      const isWeekend=dow===0||dow===6;
-      const entries=dateMap[ds]||[];
-      const hasH=entries.length>0;
-
-      const dc=document.createElement('div');
-      let cls='cal-day';
-      if(isWeekend) cls+=' weekend';
-      if(isToday) cls+=' is-today';
-      if(hasH) cls+=' has-h';
-
-      // streak classes (single country mode)
-      if(hasH && S.country!=='ALL' && streakMaps[S.country]){
-        const sk=streakMaps[S.country][ds];
-        if(sk==='start') cls+=' sk-start';
-        else if(sk==='mid') cls+=' sk-mid';
-        else if(sk==='end') cls+=' sk-end';
+    
+    // Day cells
+    for(let d=1;d<=totalDays;d++){
+      const m2=String(month+1).padStart(2,'0');
+      const d2=String(d).padStart(2,'0');
+      const dateStr=`${currentYear}-${m2}-${d2}`;
+      const holidays=holidayMap[dateStr]||[];
+      const isToday=dateStr===todayStr;
+      
+      const cell=document.createElement('div');
+      cell.className='day-cell'+(isToday?' today':'')+(holidays.length>0?' has-holiday':'');
+      
+      if(isToday){
+        const bg=document.createElement('div');
+        bg.className='today-bg';
+        cell.appendChild(bg);
       }
-      dc.className=cls;
-
-      // background color from first country
-      let bgEl='';
-      if(hasH){
-        const dominantColor=entries[0].color;
-        bgEl='<div class="day-bg" style="background:'+hexAlpha(dominantColor,0.10)+'"></div>';
+      
+      // Holiday bar (first holiday color)
+      if(holidays.length>0){
+        const bar=document.createElement('div');
+        bar.className='day-holiday-bar';
+        bar.style.background=holidays[0].color;
+        cell.appendChild(bar);
       }
-
-      // dots (max 4)
-      let dotsHtml='';
-      if(hasH){
-        const uniqueColors=[...new Set(entries.map(e=>e.color))].slice(0,4);
-        dotsHtml='<div class="day-dots">'+uniqueColors.map(c=>'<div class="ddot" style="background:'+c+'"></div>').join('')+'</div>';
+      
+      const numEl=document.createElement('div');
+      numEl.className='day-number';
+      numEl.textContent=d;
+      cell.appendChild(numEl);
+      
+      // Dots (up to 4)
+      if(holidays.length>0){
+        const dots=document.createElement('div');
+        dots.className='day-dots';
+        holidays.slice(0,4).forEach(h=>{
+          const dot=document.createElement('div');
+          dot.className='day-dot';
+          dot.style.background=h.color;
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
       }
-
-      // tooltip
-      let ttHtml='';
-      if(hasH){
-        const dateLabel=S.lang==='ar'?ds:ds.slice(5).replace('-','/');
-        let rows=entries.map(e=>'<div class="tt-row"><span class="tt-flag">'+e.flag+'</span><span class="tt-name">'+(e.name[S.lang]||e.name.en)+'</span></div>').join('');
-        ttHtml='<div class="cal-tt"><div class="tt-date">'+ds+'</div>'+rows+'</div>';
+      
+      // Tooltip
+      if(holidays.length>0){
+        const tip=document.createElement('div');
+        tip.className='tooltip';
+        holidays.forEach(h=>{
+          const item=document.createElement('div');
+          item.className='tooltip-holiday';
+          item.innerHTML=`<span class="tooltip-flag">${h.flag}</span><span class="tooltip-name">${hName(h)}</span>`;
+          tip.appendChild(item);
+        });
+        cell.appendChild(tip);
       }
-
-      dc.innerHTML=bgEl+'<span class="day-num">'+d+'</span>'+dotsHtml+ttHtml;
-      cg.appendChild(dc);
+      
+      daysGrid.appendChild(cell);
     }
-
-    // Trailing cells
-    const totalCells=firstDay+daysInMonth;
-    const trailing=(7-totalCells%7)%7;
-    for(let i=1;i<=trailing;i++){
-      const dc=document.createElement('div');
-      dc.className='cal-day other';
-      dc.innerHTML='<span class="day-num">'+i+'</span>';
-      cg.appendChild(dc);
-    }
+    
+    card.appendChild(daysGrid);
+    grid.appendChild(card);
   }
 }
 
-function renderStats(dateMap){
-  $('lblStats').textContent=T[S.lang].stats;
-  const sg=$('statsGrid');
-  sg.innerHTML='';
-  const today=todayStr();
-  let total=0,upcoming=0,countries=0;
-  const counted=new Set();
-  Object.entries(dateMap).forEach(([d,entries])=>{
-    total+=entries.length;
-    entries.forEach(e=>counted.add(e.code));
-    if(d>=today) upcoming+=entries.length;
-  });
-  countries=counted.size;
-  const items=[
-    {val:total,lbl:S.lang==='zh'?'假期总数':S.lang==='ar'?'إجمالي العطل':S.lang==='pt'?'Total Feriados':'Total Holidays'},
-    {val:upcoming,lbl:S.lang==='zh'?'即将到来':S.lang==='ar'?'العطل القادمة':S.lang==='pt'?'Próximos':'Upcoming'},
-    {val:countries,lbl:S.lang==='zh'?'覆盖国家':S.lang==='ar'?'الدول':S.lang==='pt'?'Países':'Countries'},
-    {val:Object.keys(dateMap).length,lbl:S.lang==='zh'?'假期天数':S.lang==='ar'?'أيام العطل':S.lang==='pt'?'Dias':'Holiday Days'},
-  ];
-  items.forEach(it=>{
-    const box=document.createElement('div');
-    box.className='stat-box';
-    box.innerHTML='<div class="stat-val">'+it.val+'</div><div class="stat-lbl">'+it.lbl+'</div>';
-    sg.appendChild(box);
-  });
-}
-
-function renderUpcoming(dateMap){
-  $('lblUp').textContent=T[S.lang].up;
-  const ul=$('upList');
-  ul.innerHTML='';
-  const today=todayStr();
-  const todayMs=new Date(today).getTime();
-  const allFuture=[];
-  Object.entries(dateMap).forEach(([d,entries])=>{
-    if(d>=today){
-      entries.forEach(e=>allFuture.push({date:d,...e}));
+// SIDEBAR
+function renderSidebar(){
+  document.getElementById('sidebar-upcoming-title').textContent=SIDEBAR_LABELS[currentLang];
+  const list=document.getElementById('upcoming-list');
+  list.innerHTML='';
+  
+  const holidayMap=buildHolidayMap(currentYear,currentCountry);
+  
+  // Collect all holidays from today, sorted
+  const entries=[];
+  Object.keys(holidayMap).sort().forEach(dateStr=>{
+    if(dateStr>=todayStr){
+      holidayMap[dateStr].forEach(h=>{
+        entries.push({dateStr,h});
+      });
     }
   });
-  allFuture.sort((a,b)=>a.date.localeCompare(b.date));
-  const shown=allFuture.slice(0,10);
-  if(shown.length===0){
-    ul.innerHTML='<div class="empty"><div class="empty-icon">🎉</div>'+T[S.lang].none+'</div>';
-    return;
-  }
-  const MON_SHORT={
-    zh:['一','二','三','四','五','六','七','八','九','十','十一','十二'],
-    en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-    pt:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
-    ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
-  };
-  shown.forEach(it=>{
-    const dObj=new Date(it.date+'T00:00:00');
-    const diffMs=new Date(it.date+'T00:00:00').getTime()-todayMs;
-    const diffDays=Math.round(diffMs/(1000*60*60*24));
-    let tag='';
-    if(diffDays===0) tag='<span class="up-tag t">'+T[S.lang].today+'</span>';
-    else if(diffDays===1) tag='<span class="up-tag t">'+T[S.lang].tomorrow+'</span>';
-    else tag='<span class="up-tag">'+diffDays+' '+T[S.lang].days+'</span>';
-    const mo=MON_SHORT[S.lang][dObj.getMonth()];
-    const dy=dObj.getDate();
-    const ci=COUNTRIES.find(c=>c.code===it.code);
-    const isT=diffDays===0;
-    const item=document.createElement('div');
-    item.className='up-item'+(isT?' today-hl':'');
-    item.innerHTML='<div class="up-db"><div class="up-mo">'+mo+'</div><div class="up-dy">'+dy+'</div></div><div class="up-inf"><div class="up-nm">'+(it.name[S.lang]||it.name.en)+'</div><div class="up-co">'+ci.flag+' '+ci.name[S.lang]+'</div></div>'+tag;
-    ul.appendChild(item);
+  
+  // Take first 15
+  entries.slice(0,15).forEach(({dateStr,h})=>{
+    const isToday2=dateStr===todayStr;
+    const li=document.createElement('li');
+    li.className='upcoming-item'+(isToday2?' today-item':'');
+    li.innerHTML=`
+      <span class="upcoming-flag">${h.flag}</span>
+      <div class="upcoming-info">
+        <div class="upcoming-date">${isToday2?(currentLang==='ar'?'اليوم':currentLang==='pt'?'Hoje':currentLang==='en'?'Today':'今天'):fmtDisplay(dateStr)}</div>
+        <div class="upcoming-name" title="${hName(h)}">${hName(h)}</div>
+      </div>
+    `;
+    list.appendChild(li);
   });
+  
+  if(entries.length===0){
+    const li=document.createElement('li');
+    li.className='upcoming-item';
+    li.style.color='var(--color-text2)';
+    li.style.fontSize='12px';
+    li.textContent='—';
+    list.appendChild(li);
+  }
 }
 
-function renderHList(dateMap){
-  $('lblAll').textContent=T[S.lang].all;
-  const hl=$('hList');
-  hl.innerHTML='';
-  const q=S.search.toLowerCase().trim();
-  const all=[];
-  Object.entries(dateMap).forEach(([d,entries])=>{
-    entries.forEach(e=>{
-      const nm=(e.name[S.lang]||e.name.en);
-      if(!q||nm.toLowerCase().includes(q)||d.includes(q)){
-        all.push({date:d,...e,nm});
-      }
-    });
-  });
-  all.sort((a,b)=>a.date.localeCompare(b.date));
-  if(all.length===0){
-    hl.innerHTML='<div class="empty"><div class="empty-icon">🔍</div>'+T[S.lang].none+'</div>';
-    return;
-  }
-  all.forEach(it=>{
-    const ci=COUNTRIES.find(c=>c.code===it.code);
-    const item=document.createElement('div');
-    item.className='h-item';
-    item.innerHTML='<div class="h-dot" style="background:'+it.color+'"></div><div class="h-inf"><div class="h-nm">'+it.nm+'</div><div class="h-mt"><span>'+it.date+'</span><span>'+ci.flag+' '+ci.name[S.lang]+'</span></div></div>';
-    hl.appendChild(item);
-  });
+// HERO TEXT
+function updateHeroText(){
+  document.getElementById('hero-title').textContent=TITLES[currentLang];
+  document.getElementById('header-brand').textContent=TITLES[currentLang];
+  updateHeroSubtitle();
 }
 
 function renderAll(){
-  document.documentElement.lang=S.lang;
-  document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
-  const dateMap=buildDateMap(S.year,S.country);
-  renderFilter();
-  renderOverview(dateMap);
-  renderMonths(dateMap);
-  renderStats(dateMap);
-  renderUpcoming(dateMap);
-  renderHList(dateMap);
-  // update search placeholder
-  $('searchInput').placeholder=T[S.lang].search;
+  updateHeroText();
+  renderCountryChips();
+  renderOverviewCards();
+  renderCalendar();
+  renderSidebar();
 }
 
-// Event bindings
-document.querySelectorAll('#yearGrp .pill-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('#yearGrp .pill-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    S.year=parseInt(btn.dataset.year);
-    renderAll();
-  });
+// INIT
+document.addEventListener('DOMContentLoaded',()=>{
+  initHeroImages();
+  startAutoplay();
+  initStickyHeader();
+  initYearSelect();
+  initLangButtons();
+  renderAll();
 });
-document.querySelectorAll('#langGrp .pill-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('#langGrp .pill-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    S.lang=btn.dataset.lang;
-    renderAll();
-  });
-});
-$('searchInput').addEventListener('input',e=>{
-  S.search=e.target.value;
-  const dateMap=buildDateMap(S.year,S.country);
-  renderHList(dateMap);
-});
-
-// Initial render
-renderAll();
 </script>
 </body>
 </html>
