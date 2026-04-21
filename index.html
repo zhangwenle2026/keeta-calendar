@@ -116,9 +116,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflo
   transform:none;
 }
 .country-card.active{background:rgba(255,255,255,0.12);border-bottom:2px solid var(--orange);}
-.cc-flag{font-size:22px;display:block;margin-bottom:4px}
-.cc-name{font-size:11px;font-weight:600;color:white;letter-spacing:.4px;display:block}
-.cc-city{font-size:9px;color:rgba(255,255,255,0.4);font-family:var(--font-baskerville);font-style:italic;display:block;margin-top:1px}
+.cc-flag{font-size:20px;display:block;margin-bottom:3px}
+.cc-name{font-size:10px;font-weight:600;color:white;letter-spacing:.4px;display:block}
+.cc-time{font-size:13px;font-family:'Courier New',monospace;color:rgba(255,255,255,0.9);display:block;margin-top:3px;letter-spacing:.5px}
+.cc-weather{font-size:10px;color:rgba(255,255,255,0.5);display:block;margin-top:2px}
 
 /* ===== HERO COUNTRY ===== */
 #hero-country{
@@ -153,7 +154,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflo
 }
 
 /* ===== MARKETS SECTION ===== */
-#markets-section{background:#0F0F0F;padding:60px 40px}
+#markets-section{display:none}
 .markets-scroll{
   display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;
   scrollbar-width:thin;
@@ -522,6 +523,55 @@ const WEATHER_MOCK = {
 };
 
 // ============================================================
+// WEATHER (Open-Meteo)
+// ============================================================
+const WC_MAP = (c) => {
+  if(c===0) return '☀️';
+  if(c<=2) return '⛅';
+  if(c===3) return '☁️';
+  if(c<=48) return '🌫️';
+  if(c<=67) return '🌧️';
+  if(c<=77) return '❄️';
+  if(c<=82) return '🌦️';
+  return '⛈️';
+};
+
+async function fetchWeather(code) {
+  const info = CITY_INFO[code];
+  if (!info) return;
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${info.lat}&longitude=${info.lon}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=${encodeURIComponent(info.tz)}&forecast_days=4`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const cw = data.current_weather;
+    const icon = WC_MAP(cw.weathercode);
+    const temp = Math.round(cw.temperature);
+    const forecast = [];
+    for (let i = 1; i <= 3; i++) {
+      forecast.push({
+        day: data.daily.time[i],
+        icon: WC_MAP(data.daily.weathercode[i]),
+        hi: Math.round(data.daily.temperature_2m_max[i]),
+        lo: Math.round(data.daily.temperature_2m_min[i]),
+      });
+    }
+    WEATHER_MOCK[code] = { icon, temp, unit:'°C', forecast };
+    // Update hero card
+    const hcWeather = document.querySelector(`#hero-cards .country-card:nth-child(${COUNTRIES.findIndex(c=>c.code===code)+1}) .cc-weather`);
+    if (hcWeather) hcWeather.textContent = `${icon} ${temp}°C`;
+    // Update market card
+    const mcIcon = document.querySelector(`#mc-time-${code}`)?.parentElement?.querySelector('.mc-weather-icon');
+    const mcTemp = document.querySelector(`#mc-time-${code}`)?.parentElement?.querySelector('.mc-temp');
+    if (mcIcon) mcIcon.textContent = icon;
+    if (mcTemp) mcTemp.textContent = `${temp}°C`;
+  } catch(e) { /* keep mock */ }
+}
+
+function loadAllWeather() {
+  COUNTRIES.forEach(c => fetchWeather(c.code));
+}
+
+// ============================================================
 // STATE
 // ============================================================
 let currentLang = 'zh';
@@ -587,33 +637,41 @@ function getCountryFlag(code) {
 }
 
 // Build holiday lookup map from HOLIDAYS_DATA
+// HOLIDAYS_DATA structure: { CN: { 2026: [{date, name}], 2027: [...] }, BR: {...}, ... }
 function buildHolidayMap(year, filterCode) {
-  // Returns: { "2026-01-01": [ {name, countries:[...], color} ] }
+  // Returns: { "2026-01-01": [ {name, code, color} ] }
   const map = {};
   if (typeof HOLIDAYS_DATA === 'undefined') return map;
-  const list = HOLIDAYS_DATA[year] || HOLIDAYS_DATA[String(year)] || [];
-  list.forEach(h => {
-    if (filterCode && !h.countries.includes(filterCode)) return;
-    const key = h.date;
-    if (!map[key]) map[key] = [];
-    map[key].push(h);
+  const codes = filterCode ? [filterCode] : COUNTRIES.map(c => c.code);
+  codes.forEach(code => {
+    const countryData = HOLIDAYS_DATA[code];
+    if (!countryData) return;
+    const list = countryData[year] || countryData[String(year)] || [];
+    list.forEach(h => {
+      const key = h.date;
+      if (!map[key]) map[key] = [];
+      map[key].push({ name: h.name, code, color: getCountryColor(code) });
+    });
   });
   return map;
 }
 
 function getUpcomingHolidays(year, filterCode, limit) {
   if (typeof HOLIDAYS_DATA === 'undefined') return [];
-  const list = HOLIDAYS_DATA[year] || HOLIDAYS_DATA[String(year)] || [];
+  const codes = filterCode ? [filterCode] : COUNTRIES.map(c => c.code);
   const today = new Date(); today.setHours(0,0,0,0);
-  const upcoming = list
-    .filter(h => {
-      if (filterCode && !h.countries.includes(filterCode)) return false;
+  const all = [];
+  codes.forEach(code => {
+    const countryData = HOLIDAYS_DATA[code];
+    if (!countryData) return;
+    const list = countryData[year] || countryData[String(year)] || [];
+    list.forEach(h => {
       const d = parseDate(h.date); d.setHours(0,0,0,0);
-      return d >= today;
-    })
-    .sort((a,b) => a.date.localeCompare(b.date))
-    .slice(0, limit || 10);
-  return upcoming;
+      if (d >= today) all.push({ ...h, code, color: getCountryColor(code) });
+    });
+  });
+  all.sort((a,b) => a.date.localeCompare(b.date));
+  return all.slice(0, limit || 10);
 }
 
 function getNextHoliday(code) {
@@ -641,6 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
   buildHeroSlides();
   buildHeroCards();
   buildMarkets();
+  loadAllWeather();
   buildCalendar('global');
   buildUpcoming('global');
   startSlideshow();
@@ -746,12 +805,15 @@ function buildHeroCards() {
   const container = document.getElementById('hero-cards');
   container.innerHTML = '';
   COUNTRIES.forEach(c => {
+    const info = CITY_INFO[c.code];
+    const w = WEATHER_MOCK[c.code] || {icon:'🌡',temp:'--',unit:'°C'};
     const card = document.createElement('div');
     card.className = 'country-card';
     card.innerHTML = `
       <span class="cc-flag">${c.flag}</span>
       <span class="cc-name">${countryName(c.code)}</span>
-      <span class="cc-city">${CITY_INFO[c.code].city}</span>
+      <span class="cc-time" id="hc-time-${c.code}">--:--</span>
+      <span class="cc-weather">${w.icon} ${w.temp}${w.unit}</span>
     `;
     card.addEventListener('click', () => { location.hash = '#' + c.code; });
     container.appendChild(card);
@@ -804,8 +866,14 @@ function startClocks() {
 
   function tick() {
     COUNTRIES.forEach(c => {
+      const tz = CITY_INFO[c.code].tz;
+      const t = getTimeInZone(tz);
+      // market cards
       const el = document.getElementById('mc-time-' + c.code);
-      if (el) el.textContent = getTimeInZone(CITY_INFO[c.code].tz);
+      if (el) el.textContent = t;
+      // hero bottom cards (show HH:MM only)
+      const hc = document.getElementById('hc-time-' + c.code);
+      if (hc) hc.textContent = t.slice(0,5);
     });
     // Country page clock
     if (currentCountry) {
@@ -889,7 +957,7 @@ function buildMonthCard(year, month, today, holidayMap, filterCode) {
       dayEl.textContent = d;
     } else if (holidays.length > 0) {
       // Determine dominant color
-      let color = getCountryColor(holidays[0].countries[0]);
+      let color = holidays[0].color || getCountryColor(holidays[0].code);
       if (filterCode) color = getCountryColor(filterCode);
 
       dayEl.style.color = color;
@@ -915,7 +983,7 @@ function buildMonthCard(year, month, today, holidayMap, filterCode) {
       const tt = document.createElement('div');
       tt.className = 'tooltip';
       const names = holidays.map(h => getHolidayName(h)).filter(Boolean).join(' / ');
-      const flags = holidays.map(h => h.countries.map(getCountryFlag).join('')).join(' ');
+      const flags = holidays.map(h => getCountryFlag(h.code)).join(' ');
       tt.innerHTML = `<div class="tooltip-name">${names}</div><div class="tooltip-date">${key}</div><div class="tooltip-flags">${flags}</div>`;
       dayEl.appendChild(tt);
     } else {
@@ -948,8 +1016,8 @@ function buildUpcoming(mode, filterCode) {
   upcoming.forEach(h => {
     const du = daysUntil(h.date);
     if (du < 0) return;
-    const color = filterCode ? getCountryColor(filterCode) : getCountryColor(h.countries[0]);
-    const flags = h.countries.map(getCountryFlag).join(' ');
+    const color = filterCode ? getCountryColor(filterCode) : (h.color || getCountryColor(h.code));
+    const flags = getCountryFlag(h.code);
 
     const item = document.createElement('div');
     item.className = 'upcoming-item';
