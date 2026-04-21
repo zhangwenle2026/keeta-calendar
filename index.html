@@ -2,12 +2,13 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Keeta Global Time</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0A0A0A;--bg2:#111111;--bg3:#1A1A1A;--bg4:#141414;
   --text:rgba(255,255,255,0.9);--text2:rgba(255,255,255,0.5);--text3:rgba(255,255,255,0.25);
@@ -17,223 +18,476 @@
   --font-sans:'Inter',-apple-system,sans-serif;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflow-x:hidden;min-height:100vh}
 
-/* HEADER */
-#site-header{position:fixed;top:0;left:0;width:100%;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;z-index:300;transition:background .4s,backdrop-filter .4s,border-bottom .4s}
-#site-header.transparent{background:transparent;border-bottom:none}
-#site-header.sticky{background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08)}
-.header-brand{font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:0.15em;color:white;text-decoration:none}
-.header-controls{display:flex;gap:10px;align-items:center}
-.header-select{appearance:none;-webkit-appearance:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white;padding:6px 28px 6px 12px;border-radius:8px;font-family:var(--font-sans);font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
-.header-select:hover{background-color:rgba(255,255,255,0.14)}
-.header-select option{background:#1a1a1a;color:white}
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
-/* HERO */
-#hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;background:#000}
-.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease}
-.hero-img.active{opacity:1}
-.hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.05) 30%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.82) 100%);z-index:2;pointer-events:none}
-.hero-content{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:clamp(100px,16vh,160px);z-index:3;text-align:center;padding-left:24px;padding-right:24px}
-.hero-title{font-family:var(--font-serif);font-size:clamp(60px,9vw,130px);font-weight:900;color:white;text-shadow:0 2px 32px rgba(0,0,0,0.4);line-height:0.95;letter-spacing:-0.03em}
-.hero-subtitle{margin-top:18px;font-family:var(--font-baskerville);font-size:13px;font-style:italic;font-weight:400;color:rgba(255,255,255,0.55);letter-spacing:0.05em}
+/* ===== HEADER ===== */
+#site-header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;
+  transition:background .4s,backdrop-filter .4s;
+}
+#site-header.transparent{background:transparent}
+#site-header.solid{background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+#header-left{display:flex;align-items:center;gap:8px}
+#back-btn{
+  display:none;align-items:center;gap:6px;
+  background:none;border:none;color:white;cursor:pointer;
+  font-family:var(--font-serif);font-weight:900;font-size:20px;letter-spacing:3px;
+  padding:0;
+}
+#back-btn .back-arrow{font-size:16px;opacity:0.7}
+#header-right{display:flex;align-items:center;gap:24px}
+.lang-group{display:flex;align-items:center;gap:16px}
+.lang-btn{
+  font-size:12px;font-weight:500;background:none;border:none;cursor:pointer;
+  padding:2px 0;color:rgba(255,255,255,0.38);border-bottom:2px solid transparent;
+  transition:all .2s;letter-spacing:.5px;
+}
+.lang-btn.active{color:white;border-bottom:2px solid white;padding-bottom:1px}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.65)}
+#year-select{
+  background:none;border:1px solid rgba(255,255,255,0.2);color:white;
+  font-size:12px;font-family:var(--font-sans);padding:4px 8px;border-radius:6px;
+  cursor:pointer;outline:none;
+}
+#year-select option{background:#1a1a1a;color:white}
 
-/* COUNTRY CARDS ON HERO */
-.hero-countries{position:absolute;bottom:0;left:0;right:0;z-index:4;padding:0 40px 40px;display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
-.country-card{position:relative;background:rgba(0,0,0,0.38);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:18px 14px 16px;cursor:pointer;transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;overflow:hidden;text-align:center}
-.country-card::before{content:'';position:absolute;inset:0;border-radius:14px;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,0.12) 0%,transparent 65%);opacity:0;transition:opacity .3s}
-.country-card:hover::before{opacity:1}
-.country-card:hover{background:rgba(0,0,0,0.52);border-color:rgba(255,255,255,0.35);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5)}
-.country-card.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 1px rgba(255,255,255,0.25),0 8px 32px rgba(0,0,0,0.4)}
-.country-card-flag{font-size:26px;line-height:1;display:block;margin-bottom:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4))}
-.country-card-name{font-family:var(--font-serif);font-size:13px;font-weight:700;color:white;line-height:1.2;display:block}
-.country-card-city{font-family:var(--font-baskerville);font-size:10px;font-style:italic;color:rgba(255,255,255,0.5);display:block;margin-top:4px;line-height:1.3}
-/* shimmer sweep on hover */
-.country-card::after{content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.07),transparent);transform:skewX(-20deg);transition:left .5s ease}
+/* ===== HERO GLOBAL ===== */
+#hero-global{
+  position:relative;width:100%;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.hero-slide{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1.2s ease;
+}
+.hero-slide.active{opacity:1}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.2) 40%,rgba(0,0,0,0.65) 80%,rgba(0,0,0,0.9) 100%);
+}
+.hero-content{
+  position:relative;z-index:2;text-align:center;
+  display:flex;flex-direction:column;align-items:center;
+  gap:12px;margin-top:-80px;
+}
+.hero-title{
+  font-family:var(--font-serif);font-weight:900;
+  font-size:clamp(60px,9vw,130px);color:white;
+  line-height:1;letter-spacing:-1px;
+}
+.hero-subtitle{
+  font-family:var(--font-baskerville);font-style:italic;
+  font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:1px;
+}
+.hero-cards{
+  position:absolute;bottom:40px;left:0;right:0;z-index:2;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  max-width:900px;margin:0 auto;padding:0 40px;
+}
+.country-card{
+  background:rgba(0,0,0,0.38);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.14);border-radius:14px;
+  padding:18px 14px 16px;cursor:pointer;text-align:center;
+  transition:all .3s;overflow:hidden;position:relative;
+}
+.country-card::after{
+  content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,0.07),transparent);
+  transform:skewX(-20deg);transition:left .5s;
+}
 .country-card:hover::after{left:125%}
+.country-card:hover{
+  background:rgba(0,0,0,0.55);border-color:rgba(255,255,255,0.35);
+  transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5);
+}
+.cc-flag{font-size:28px;display:block;margin-bottom:6px}
+.cc-name{font-size:12px;font-weight:600;color:white;letter-spacing:.5px;display:block}
+.cc-city{font-size:10px;color:rgba(255,255,255,0.45);font-family:var(--font-baskerville);font-style:italic;display:block;margin-top:2px}
 
-.hero-scroll{position:absolute;bottom:160px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;animation:scrollBounce 2s ease-in-out infinite;opacity:0.7}
-.hero-scroll-ring{width:34px;height:34px;border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.hero-scroll-arrow{width:7px;height:7px;border-right:1.5px solid rgba(255,255,255,0.8);border-bottom:1.5px solid rgba(255,255,255,0.8);transform:rotate(45deg);margin-top:-3px}
-@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
-.hero-credit{position:absolute;bottom:16px;right:20px;z-index:3;font-size:10px;color:rgba(255,255,255,0.22);font-family:var(--font-sans)}
+/* ===== HERO COUNTRY ===== */
+#hero-country{
+  display:none;position:relative;width:100%;height:100vh;overflow:hidden;
+  align-items:flex-end;justify-content:flex-start;
+}
+.hero-country-bg{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+}
+.hero-country-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.15) 100%);
+}
+.hero-country-content{
+  position:relative;z-index:2;padding:60px 80px;
+}
+.hero-country-title{
+  font-family:var(--font-serif);font-weight:900;
+  font-size:clamp(72px,10vw,150px);color:white;
+  line-height:0.9;letter-spacing:-2px;
+}
+.hero-country-subtitle{
+  font-family:var(--font-baskerville);font-style:italic;
+  font-size:18px;color:rgba(255,255,255,0.6);margin-top:12px;
+}
 
-/* (country bar removed — using hero cards) */
+/* ===== SECTION LABEL ===== */
+.section-label{
+  font-size:10px;font-weight:600;letter-spacing:3px;
+  color:rgba(255,255,255,0.35);text-transform:uppercase;
+  margin-bottom:24px;
+}
 
-/* MARKETS SECTION */
-#markets-section{background:#0F0F0F;padding:40px 48px}
-.section-label{font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:0.22em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:24px}
-.markets-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
-.markets-scroll::-webkit-scrollbar{display:none}
-.market-card{min-width:220px;background:var(--bg3);border-radius:16px;padding:24px;flex-shrink:0;transition:background .2s,transform .2s;cursor:default}
-.market-card:hover{background:#222;transform:translateY(-3px)}
-.market-card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.market-flag{font-size:28px;line-height:1}
-.market-name{font-family:var(--font-serif);font-size:17px;font-weight:400;color:var(--text)}
-.market-time{font-family:'Courier New',Courier,monospace;font-size:30px;font-weight:400;color:white;letter-spacing:-0.02em;line-height:1}
-.market-tz{font-size:11px;color:rgba(255,255,255,0.38);margin-top:4px;letter-spacing:0.03em}
-.market-divider{height:1px;background:rgba(255,255,255,0.06);margin:16px 0}
-.market-weather{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.market-weather-main{display:flex;align-items:center;gap:8px}
-.market-weather-icon{font-size:26px;line-height:1}
-.market-weather-temp{font-size:26px;font-weight:300;color:white}
-.market-weather-forecast{display:flex;flex-direction:column;gap:3px}
-.forecast-row{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,0.45)}
-.forecast-day{width:22px}
-.forecast-icon{font-size:11px}
-.forecast-temps{color:rgba(255,255,255,0.55)}
-.market-weather-skeleton{width:80px;height:30px;background:rgba(255,255,255,0.06);border-radius:6px;animation:shimmer 1.5s infinite}
-@keyframes shimmer{0%,100%{opacity:0.4}50%{opacity:0.8}}
-.market-holiday{margin-top:12px;font-size:11px;color:var(--orange);font-weight:400}
+/* ===== MARKETS SECTION ===== */
+#markets-section{background:#0F0F0F;padding:60px 40px}
+.markets-scroll{
+  display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;
+  scrollbar-width:thin;
+}
+.market-card{
+  min-width:220px;flex-shrink:0;
+  background:var(--bg3);border:1px solid var(--border);border-radius:16px;
+  padding:24px 20px;transition:border-color .3s;
+}
+.market-card:hover{border-color:rgba(255,255,255,0.2)}
+.mc-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mc-flag{font-size:22px}
+.mc-country{font-size:13px;font-weight:600;color:var(--text)}
+.mc-city{font-size:10px;color:var(--text2);font-style:italic}
+.mc-time{
+  font-family:'Courier New',monospace;font-size:28px;font-weight:700;
+  color:white;letter-spacing:1px;margin-bottom:4px;
+}
+.mc-tz{font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:16px}
+.mc-weather{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.mc-weather-icon{font-size:22px}
+.mc-temp{font-size:20px;font-weight:600;color:var(--text)}
+.mc-holiday{
+  font-size:10px;color:var(--orange);padding-top:12px;
+  border-top:1px solid var(--border);line-height:1.5;
+}
 
-/* MAIN CONTENT */
-#main-content{display:flex;gap:0;background:var(--bg)}
+/* ===== CALENDAR SECTION ===== */
+#calendar-section{background:var(--bg);padding:60px 40px}
+.calendar-layout{display:grid;grid-template-columns:1fr 280px;gap:32px;max-width:1400px;margin:0 auto}
+.calendar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.month-card{background:var(--bg4);border-radius:16px;padding:20px;border:1px solid var(--border)}
+.month-title{
+  font-size:13px;font-weight:600;color:var(--text);
+  margin-bottom:14px;letter-spacing:.3px;
+}
+.cal-weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  margin-bottom:6px;
+}
+.cal-wd{
+  text-align:center;font-size:9px;color:var(--text3);
+  font-weight:500;padding:2px 0;
+}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day{
+  position:relative;text-align:center;padding:5px 2px;
+  font-size:11px;color:var(--text2);border-radius:6px;
+  cursor:default;line-height:1;
+}
+.cal-day.empty{pointer-events:none}
+.cal-day.today{
+  background:var(--orange);color:black!important;
+  font-weight:700;border-radius:50%;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto;font-size:11px;
+}
+.cal-day.holiday{font-weight:700;cursor:pointer;position:relative;padding-left:4px}
+.cal-day.holiday::before{
+  content:'';position:absolute;left:0;top:2px;bottom:2px;
+  width:3px;border-radius:2px;
+}
+.cal-day .holiday-dot{
+  position:absolute;bottom:1px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;
+}
+.cal-day.weekend{color:rgba(255,255,255,0.4)}
+.cal-day:not(.empty):not(.today):hover{background:rgba(255,255,255,0.06)}
 
-/* CALENDAR */
-#calendar-area{flex:1;padding:40px 48px 64px;min-width:0}
-.calendar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.month-card{background:var(--bg4);border-radius:16px;padding:20px;overflow:hidden}
-.month-title{font-family:var(--font-serif);font-size:20px;font-weight:400;color:var(--text);margin-bottom:14px}
-.weekday-row{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px}
-.weekday-cell{text-align:center;font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;padding:2px 0;letter-spacing:0.05em}
-.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
-.day-cell{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;border-radius:6px;transition:background .15s;padding:2px;min-height:28px}
-.day-cell:hover{background:rgba(255,255,255,0.06)}
-.day-cell.has-holiday{border-left:3px solid transparent;border-radius:0 6px 6px 0}
-.day-number{font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);line-height:1;z-index:1;position:relative}
-.day-cell.has-holiday .day-number{font-weight:600;color:rgba(255,255,255,0.88)}
-.day-cell.is-weekend .day-number{color:rgba(255,255,255,0.32)}
-.day-cell.is-today .day-number{color:#0A0A0A;font-weight:700}
-.today-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--orange);z-index:0}
-.day-dots{display:flex;gap:2px;margin-top:2px;z-index:1;position:relative;min-height:5px;align-items:center;justify-content:center}
-.day-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
 /* Tooltip */
-.day-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1E1E1E;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 12px;z-index:100;min-width:160px;max-width:240px;box-shadow:0 8px 32px rgba(0,0,0,0.6);pointer-events:none}
-.day-cell:hover .day-tooltip{display:block}
-.tooltip-item{display:flex;align-items:flex-start;gap:8px;padding:4px 0}
-.tooltip-item+.tooltip-item{border-top:1px solid rgba(255,255,255,0.06)}
-.tooltip-flag{font-size:13px;flex-shrink:0;margin-top:1px}
-.tooltip-name{font-size:12px;font-weight:500;color:rgba(255,255,255,0.88);line-height:1.35;white-space:normal}
-
-/* SIDEBAR */
-#sidebar{width:280px;flex-shrink:0;padding:40px 32px 40px 0;position:sticky;top:64px;max-height:calc(100vh - 64px);overflow-y:auto;scrollbar-width:none}
-#sidebar::-webkit-scrollbar{display:none}
-.upcoming-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-.upcoming-item.today{background:rgba(255,105,0,0.08);border-radius:8px;padding:12px;margin:0 -12px;border-bottom:none}
-.upcoming-bar{width:3px;height:32px;border-radius:2px;flex-shrink:0;margin-top:1px}
-.upcoming-flag{font-size:14px;line-height:1.6;flex-shrink:0}
-.upcoming-info{}
-.upcoming-date{font-size:10px;color:var(--text2);font-weight:400;line-height:1.4}
-.upcoming-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;margin-top:1px}
-
-/* RESPONSIVE */
-@media(max-width:1200px){
-  .hero-countries{grid-template-columns:repeat(4,1fr);gap:8px;padding:0 24px 32px}
-  .hero-scroll{bottom:220px}
+.tooltip{
+  display:none;position:absolute;z-index:200;bottom:calc(100% + 6px);left:50%;
+  transform:translateX(-50%);
+  background:#1E1E1E;border:1px solid rgba(255,255,255,0.1);border-radius:10px;
+  padding:8px 12px;min-width:140px;max-width:200px;pointer-events:none;
+  white-space:normal;word-break:break-word;
 }
-@media(max-width:768px){
-  #site-header{padding:0 20px;height:56px}
-  #markets-section{padding:28px 20px}
-  #calendar-area{padding:28px 20px 48px}
-  #sidebar{display:none}
-  .hero-title{font-size:clamp(44px,12vw,72px)}
-  .hero-countries{grid-template-columns:repeat(4,1fr);gap:6px;padding:0 16px 24px}
-  .country-card{padding:14px 10px 12px}
-  .country-card-flag{font-size:22px}
-  .country-card-name{font-size:11px}
-  .country-card-city{display:none}
-  .hero-scroll{bottom:185px}
+.tooltip-name{font-size:11px;font-weight:600;color:white;margin-bottom:4px}
+.tooltip-date{font-size:10px;color:var(--text2)}
+.tooltip-flags{font-size:10px;color:var(--text2);margin-top:3px}
+.cal-day:hover .tooltip{display:block}
+
+/* ===== UPCOMING PANEL ===== */
+.upcoming-panel{
+  background:var(--bg4);border:1px solid var(--border);border-radius:16px;
+  padding:24px;height:fit-content;position:sticky;top:90px;
 }
-@media(max-width:480px){
+.upcoming-list{display:flex;flex-direction:column;gap:0}
+.upcoming-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.upcoming-item:last-child{border-bottom:none}
+.ui-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;
+}
+.ui-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.ui-meta{font-size:10px;color:var(--text2)}
+.ui-days{
+  margin-left:auto;font-size:20px;font-weight:700;
+  font-family:'Courier New',monospace;color:var(--orange);flex-shrink:0;
+}
+.ui-days-label{font-size:9px;color:var(--text3);text-align:right}
+
+/* ===== CITY INFO CARD ===== */
+#city-info-section{display:none;background:#0F0F0F;padding:60px 40px}
+.city-card{
+  max-width:900px;margin:0 auto;background:#1A1A1A;border-radius:20px;padding:40px;
+  border:1px solid var(--border);
+}
+.city-card-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;align-items:start}
+.city-left{}
+.city-flag-big{font-size:48px;display:block;margin-bottom:12px}
+.city-country-name{font-family:var(--font-serif);font-size:36px;font-weight:900;color:white;line-height:1}
+.city-city-name{font-family:var(--font-baskerville);font-style:italic;font-size:14px;color:var(--text2);margin-top:6px}
+.city-mid{}
+.city-time{
+  font-family:'Courier New',monospace;font-size:52px;font-weight:700;
+  color:white;letter-spacing:2px;line-height:1;
+}
+.city-tz{font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px}
+.city-right{}
+.city-temp{font-size:40px;font-weight:700;color:var(--text);line-height:1}
+.city-forecast{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.forecast-row{font-size:11px;color:var(--text2);display:flex;gap:6px}
+.city-card-footer{
+  margin-top:28px;padding-top:20px;border-top:1px solid var(--border);
+  font-size:12px;color:var(--orange);
+}
+
+/* ===== SCROLL TO TOP ===== */
+#scroll-top{
+  position:fixed;bottom:30px;right:30px;z-index:50;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,105,0,0.85);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:white;opacity:0;pointer-events:none;
+  transition:opacity .3s;box-shadow:0 4px 20px rgba(255,105,0,0.4);
+}
+#scroll-top.visible{opacity:1;pointer-events:all}
+
+/* ===== RTL ===== */
+[dir="rtl"] .hero-country-content{padding:60px 80px 60px auto;text-align:right}
+[dir="rtl"] .mc-header{flex-direction:row-reverse}
+[dir="rtl"] .upcoming-item{flex-direction:row-reverse}
+[dir="rtl"] .city-card-inner{direction:rtl}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .hero-cards{grid-template-columns:repeat(4,1fr);padding:0 20px;gap:8px;bottom:20px}
+  .calendar-layout{grid-template-columns:1fr}
+  .calendar-grid{grid-template-columns:repeat(2,1fr)}
+  #site-header{padding:16px 20px}
+  .hero-country-content{padding:40px 24px}
+  .city-card-inner{grid-template-columns:1fr;gap:20px}
+  .calendar-layout .upcoming-panel{position:static}
+}
+@media(max-width:600px){
+  .hero-cards{grid-template-columns:repeat(2,1fr)}
   .calendar-grid{grid-template-columns:1fr}
-  .hero-countries{grid-template-columns:repeat(4,1fr);gap:5px;padding:0 12px 20px}
+  .markets-scroll{gap:12px}
+  #markets-section,#calendar-section,#city-info-section{padding:40px 20px}
 }
+
+/* fade-in animation for view switches */
+.fade-in{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header id="site-header" class="transparent">
-  <a class="header-brand" href="#">KEETA</a>
-  <div class="header-controls">
-    <select class="header-select" id="year-select">
+  <div id="header-left">
+    <button id="back-btn"><span class="back-arrow">←</span> <span id="back-label">All Markets</span></button>
+  </div>
+  <div id="header-right">
+    <div class="lang-group" id="lang-group"></div>
+    <select id="year-select">
       <option value="2026">2026</option>
       <option value="2027">2027</option>
-    </select>
-    <select class="header-select" id="lang-select">
-      <option value="zh">中文</option>
-      <option value="en">EN</option>
-      <option value="pt">PT</option>
-      <option value="ar">AR</option>
     </select>
   </div>
 </header>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-gradient"></div>
-  <div class="hero-content">
-    <h1 class="hero-title" id="hero-title">Keeta Global Time</h1>
-    <p class="hero-subtitle" id="hero-subtitle">Holidays · Weather · Timezone · 8 Markets</p>
-  </div>
-  <div class="hero-countries" id="hero-countries"></div>
-  <div class="hero-scroll" onclick="document.getElementById('markets-section').scrollIntoView({behavior:'smooth'})">
-    <div class="hero-scroll-ring"><div class="hero-scroll-arrow"></div></div>
-  </div>
-  <div class="hero-credit">Photo: Unsplash</div>
-</section>
+<!-- ===== GLOBAL OVERVIEW ===== -->
+<div id="view-global">
 
-<!-- MARKETS -->
-<section id="markets-section">
-  <div class="section-label">Markets</div>
-  <div class="markets-scroll" id="markets-scroll"></div>
-</section>
+  <!-- Hero Global -->
+  <section id="hero-global">
+    <div id="hero-slides"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Keeta Global Time</h1>
+      <p class="hero-subtitle" id="hero-subtitle-text">Holidays · Weather · Timezone · 8 Markets</p>
+    </div>
+    <div class="hero-cards" id="hero-cards"></div>
+  </section>
 
-<!-- MAIN: CALENDAR + SIDEBAR -->
-<div id="main-content">
-  <div id="calendar-area">
-    <div class="calendar-grid" id="calendar-grid"></div>
-  </div>
-  <aside id="sidebar">
-    <div class="section-label" style="margin-bottom:16px">Upcoming</div>
-    <div id="upcoming-list"></div>
-  </aside>
+  <!-- Markets -->
+  <section id="markets-section">
+    <p class="section-label" id="markets-label">MARKETS</p>
+    <div class="markets-scroll" id="markets-scroll"></div>
+  </section>
+
+  <!-- Calendar Global -->
+  <section id="calendar-section">
+    <div class="calendar-layout">
+      <div>
+        <p class="section-label" id="cal-label-global">CALENDAR 2026</p>
+        <div class="calendar-grid" id="calendar-grid-global"></div>
+      </div>
+      <div>
+        <p class="section-label" id="upcoming-label-global">UPCOMING</p>
+        <div class="upcoming-panel" id="upcoming-panel-global">
+          <div class="upcoming-list" id="upcoming-list-global"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>
+
+<!-- ===== COUNTRY PAGE ===== -->
+<div id="view-country" style="display:none">
+
+  <!-- Hero Country -->
+  <section id="hero-country">
+    <div class="hero-country-bg" id="country-hero-bg"></div>
+    <div class="hero-country-overlay"></div>
+    <div class="hero-country-content">
+      <h1 class="hero-country-title" id="country-title"></h1>
+      <p class="hero-country-subtitle" id="country-subtitle"></p>
+    </div>
+  </section>
+
+  <!-- City Info -->
+  <section id="city-info-section" style="display:block">
+    <div class="city-card" id="city-card">
+      <div class="city-card-inner">
+        <div class="city-left">
+          <span class="city-flag-big" id="city-flag"></span>
+          <div class="city-country-name" id="city-country-name"></div>
+          <div class="city-city-name" id="city-city-name"></div>
+        </div>
+        <div class="city-mid">
+          <div class="city-time" id="city-time">--:--:--</div>
+          <div class="city-tz" id="city-tz"></div>
+        </div>
+        <div class="city-right">
+          <div class="city-temp" id="city-temp">--</div>
+          <div class="city-forecast" id="city-forecast"></div>
+        </div>
+      </div>
+      <div class="city-card-footer" id="city-next-holiday"></div>
+    </div>
+  </section>
+
+  <!-- Calendar Country -->
+  <section id="calendar-section-country" style="background:var(--bg);padding:60px 40px">
+    <div class="calendar-layout">
+      <div>
+        <p class="section-label" id="cal-label-country">CALENDAR 2026</p>
+        <div class="calendar-grid" id="calendar-grid-country"></div>
+      </div>
+      <div>
+        <p class="section-label" id="upcoming-label-country">UPCOMING</p>
+        <div class="upcoming-panel">
+          <div class="upcoming-list" id="upcoming-list-country"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Scroll Top -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script src="holidays-data.js"></script>
 <script>
-const COUNTRIES=[
-  {code:'ALL',flag:'🌍',zh:'全部',en:'All Markets',pt:'Todos',ar:'الكل'},
-  {code:'CN',flag:'🇨🇳',zh:'中国',en:'China',pt:'China',ar:'الصين',color:'#EF4444'},
-  {code:'BR',flag:'🇧🇷',zh:'巴西',en:'Brazil',pt:'Brasil',ar:'البرازيل',color:'#22C55E'},
-  {code:'HK',flag:'🇭🇰',zh:'香港',en:'Hong Kong',pt:'Hong Kong',ar:'هونغ كونغ',color:'#8B5CF6'},
-  {code:'SA',flag:'🇸🇦',zh:'沙特',en:'Saudi Arabia',pt:'Arábia Saudita',ar:'السعودية',color:'#F59E0B'},
-  {code:'AE',flag:'🇦🇪',zh:'阿联酋',en:'UAE',pt:'Emirados',ar:'الإمارات',color:'#06B6D4'},
-  {code:'QA',flag:'🇶🇦',zh:'卡塔尔',en:'Qatar',pt:'Catar',ar:'قطر',color:'#EC4899'},
-  {code:'KW',flag:'🇰🇼',zh:'科威特',en:'Kuwait',pt:'Kuwait',ar:'الكويت',color:'#10B981'},
-  {code:'BH',flag:'🇧🇭',zh:'巴林',en:'Bahrain',pt:'Bahrein',ar:'البحرين',color:'#F97316'},
-];
-const CITY_COORDS={
-  CN:{lat:39.9042,lon:116.4074,tz:'Asia/Shanghai',tzLabel:'UTC+8 · CST'},
-  BR:{lat:-22.9068,lon:-43.1729,tz:'America/Sao_Paulo',tzLabel:'UTC-3 · BRT'},
-  HK:{lat:22.3193,lon:114.1694,tz:'Asia/Hong_Kong',tzLabel:'UTC+8 · HKT'},
-  SA:{lat:24.7136,lon:46.6753,tz:'Asia/Riyadh',tzLabel:'UTC+3 · AST'},
-  AE:{lat:25.2048,lon:55.2708,tz:'Asia/Dubai',tzLabel:'UTC+4 · GST'},
-  QA:{lat:25.2854,lon:51.5310,tz:'Asia/Qatar',tzLabel:'UTC+3 · AST'},
-  KW:{lat:29.3759,lon:47.9774,tz:'Asia/Kuwait',tzLabel:'UTC+3 · AST'},
-  BH:{lat:26.0667,lon:50.5577,tz:'Asia/Bahrain',tzLabel:'UTC+3 · AST'},
+// ============================================================
+// DATA
+// ============================================================
+const LANGS = ['zh', 'zh-TW', 'en', 'pt', 'ar'];
+const LANG_LABELS = {zh:'中', 'zh-TW':'繁', en:'EN', pt:'PT', ar:'AR'};
+
+const COUNTRY_NAMES = {
+  zh:     {CN:'中国',BR:'巴西',HK:'香港',SA:'沙特',AE:'阿联酋',QA:'卡塔尔',KW:'科威特',BH:'巴林'},
+  'zh-TW':{CN:'中國',BR:'巴西',HK:'香港',SA:'沙烏地阿拉伯',AE:'阿聯酋',QA:'卡達',KW:'科威特',BH:'巴林'},
+  en:     {CN:'China',BR:'Brazil',HK:'Hong Kong',SA:'Saudi Arabia',AE:'UAE',QA:'Qatar',KW:'Kuwait',BH:'Bahrain'},
+  pt:     {CN:'China',BR:'Brasil',HK:'Hong Kong',SA:'Arábia Saudita',AE:'Emirados',QA:'Catar',KW:'Kuwait',BH:'Bahrein'},
+  ar:     {CN:'الصين',BR:'البرازيل',HK:'هونغ كونغ',SA:'السعودية',AE:'الإمارات',QA:'قطر',KW:'الكويت',BH:'البحرين'},
 };
-const HERO_PHOTOS={
-  ALL:[
-    'https://images.unsplash.com/photo-1583405584623-58f4b7d1380f',
-    'https://images.unsplash.com/photo-1599342019150-cd9ca23e1029',
-    'https://images.unsplash.com/photo-1598260989070-bf1642185e48',
-    'https://images.unsplash.com/photo-1506795213373-430e921fe2ed',
-    'https://images.unsplash.com/photo-1512453979798-5ea266f8880c',
-    'https://images.unsplash.com/photo-1594925960144-70cf43b3321c',
-    'https://images.unsplash.com/photo-1772785551540-4a41585f8eae',
-    'https://images.unsplash.com/photo-1706992368824-75d6240002d2',
-  ],
+
+const MONTH_NAMES = {
+  zh:     ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+  'zh-TW':['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+  en:     ['January','February','March','April','May','June','July','August','September','October','November','December'],
+  pt:     ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+  ar:     ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+};
+
+const WEEKDAY_SHORT = {
+  zh:     ['日','一','二','三','四','五','六'],
+  'zh-TW':['日','一','二','三','四','五','六'],
+  en:     ['Su','Mo','Tu','We','Th','Fr','Sa'],
+  pt:     ['Do','Se','Te','Qu','Qu','Se','Sá'],
+  ar:     ['أح','إث','ثل','أر','خم','جم','سب'],
+};
+
+const UI_TEXT = {
+  markets:    {zh:'市场','zh-TW':'市場',en:'MARKETS',pt:'MERCADOS',ar:'الأسواق'},
+  upcoming:   {zh:'即将到来','zh-TW':'即將到來',en:'UPCOMING',pt:'PRÓXIMOS',ar:'القادمة'},
+  allMarkets: {zh:'← 全部市场','zh-TW':'← 全部市場',en:'← All Markets',pt:'← Todos',ar:'← الكل'},
+  subtitle:   {zh:'节假日 · 天气 · 时区 · 全球8市场','zh-TW':'節假日 · 天氣 · 時區 · 全球8市場',en:'Holidays · Weather · Timezone · 8 Markets',pt:'Feriados · Clima · Fuso Horário · 8 Mercados',ar:'العطل · الطقس · المنطقة الزمنية · 8 أسواق'},
+  calendar:   {zh:'日历','zh-TW':'日曆',en:'CALENDAR',pt:'CALENDÁRIO',ar:'التقويم'},
+  nextHol:    {zh:'最近假期：','zh-TW':'最近假期：',en:'Next Holiday: ',pt:'Próximo Feriado: ',ar:'العطلة القادمة: '},
+  days:       {zh:'天','zh-TW':'天',en:'d',pt:'d',ar:'ي'},
+};
+
+const COUNTRIES = [
+  {code:'CN',flag:'🇨🇳',color:'#EF4444'},
+  {code:'BR',flag:'🇧🇷',color:'#22C55E'},
+  {code:'HK',flag:'🇭🇰',color:'#8B5CF6'},
+  {code:'SA',flag:'🇸🇦',color:'#F59E0B'},
+  {code:'AE',flag:'🇦🇪',color:'#06B6D4'},
+  {code:'QA',flag:'🇶🇦',color:'#EC4899'},
+  {code:'KW',flag:'🇰🇼',color:'#10B981'},
+  {code:'BH',flag:'🇧🇭',color:'#F97316'},
+];
+
+const CITY_INFO = {
+  CN:{lat:39.9042,lon:116.4074,tz:'Asia/Shanghai',tzLabel:'UTC+8 · CST',city:'Beijing'},
+  BR:{lat:-22.9068,lon:-43.1729,tz:'America/Sao_Paulo',tzLabel:'UTC-3 · BRT',city:'Rio de Janeiro'},
+  HK:{lat:22.3193,lon:114.1694,tz:'Asia/Hong_Kong',tzLabel:'UTC+8 · HKT',city:'Hong Kong'},
+  SA:{lat:24.7136,lon:46.6753,tz:'Asia/Riyadh',tzLabel:'UTC+3 · AST',city:'Riyadh'},  AE:{lat:25.2048,lon:55.2708,tz:'Asia/Dubai',tzLabel:'UTC+4 · GST',city:'Dubai'},
+  QA:{lat:25.2854,lon:51.5310,tz:'Asia/Qatar',tzLabel:'UTC+3 · AST',city:'Doha'},
+  KW:{lat:29.3759,lon:47.9774,tz:'Asia/Kuwait',tzLabel:'UTC+3 · AST',city:'Kuwait City'},
+  BH:{lat:26.0667,lon:50.5577,tz:'Asia/Bahrain',tzLabel:'UTC+3 · AST',city:'Manama'},
+};
+
+const HERO_PHOTOS = {
   CN:'https://images.unsplash.com/photo-1583405584623-58f4b7d1380f',
   BR:'https://images.unsplash.com/photo-1599342019150-cd9ca23e1029',
   HK:'https://images.unsplash.com/photo-1598260989070-bf1642185e48',
@@ -243,385 +497,573 @@ const HERO_PHOTOS={
   KW:'https://images.unsplash.com/photo-1772785551540-4a41585f8eae',
   BH:'https://images.unsplash.com/photo-1706992368824-75d6240002d2',
 };
-const IMG_PARAMS='?w=1600&h=900&fit=crop&q=80&auto=format';
-const MONTH_NAMES={
-  zh:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
-  en:['January','February','March','April','May','June','July','August','September','October','November','December'],
-  pt:['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
-  ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+const ALL_PHOTOS = Object.values(HERO_PHOTOS);
+const IMG_PARAMS = '?w=1600&h=900&fit=crop&q=80&auto=format';
+
+// Mock weather data (in real app would use Open-Meteo API)
+const WEATHER_MOCK = {
+  CN:{icon:'⛅',temp:22,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:24,lo:14},{day:'Tue',icon:'🌤',hi:23,lo:13},{day:'Wed',icon:'🌧',hi:18,lo:11}]},
+  BR:{icon:'☀️',temp:28,unit:'°C',forecast:[{day:'Mon',icon:'⛅',hi:29,lo:22},{day:'Tue',icon:'🌦',hi:27,lo:21},{day:'Wed',icon:'⛈',hi:25,lo:20}]},
+  HK:{icon:'🌤',temp:26,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:28,lo:22},{day:'Tue',icon:'⛅',hi:27,lo:21},{day:'Wed',icon:'🌧',hi:24,lo:20}]},
+  SA:{icon:'☀️',temp:38,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:40,lo:28},{day:'Tue',icon:'☀️',hi:39,lo:27},{day:'Wed',icon:'🌤',hi:37,lo:26}]},
+  AE:{icon:'☀️',temp:36,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:38,lo:27},{day:'Tue',icon:'☀️',hi:37,lo:26},{day:'Wed',icon:'☀️',hi:36,lo:25}]},
+  QA:{icon:'☀️',temp:37,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:39,lo:28},{day:'Tue',icon:'☀️',hi:38,lo:27},{day:'Wed',icon:'🌤',hi:36,lo:26}]},
+  KW:{icon:'☀️',temp:39,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:41,lo:29},{day:'Tue',icon:'☀️',hi:40,lo:28},{day:'Wed',icon:'☀️',hi:38,lo:27}]},
+  BH:{icon:'🌤',temp:34,unit:'°C',forecast:[{day:'Mon',icon:'☀️',hi:36,lo:26},{day:'Tue',icon:'☀️',hi:35,lo:25},{day:'Wed',icon:'⛅',hi:33,lo:24}]},
 };
-const WEEKDAY_SHORT={
-  zh:['日','一','二','三','四','五','六'],
-  en:['Su','Mo','Tu','We','Th','Fr','Sa'],
-  pt:['Do','Se','Te','Qu','Qu','Se','Sá'],
-  ar:['أح','إث','ثل','أر','خم','جم','سب'],
-};
-const HERO_TITLES={zh:'Keeta Global Time',en:'Keeta Global Time',pt:'Keeta Global Time',ar:'Keeta Global Time'};
-const COUNTRY_CITIES={CN:'Beijing',BR:'Rio de Janeiro',HK:'Hong Kong',SA:'Riyadh',AE:'Dubai',QA:'Doha',KW:'Kuwait City',BH:'Manama'};
 
-// State
-let currentLang='zh', currentYear=2026, currentCountry='ALL';
-let heroSlideIndex=0, heroTimer=null;
-let weatherData={};
+// ============================================================
+// STATE
+// ============================================================
+let currentLang = 'zh';
+let currentYear = 2026;
+let currentCountry = null;
+let slideInterval = null;
+let currentSlide = 0;
+let clockIntervals = {};
 
-// --- HERO IMAGES ---
-function buildHeroImages(){
-  const hero=document.getElementById('hero');
-  hero.querySelectorAll('.hero-img').forEach(el=>el.remove());
-  const urls=HERO_PHOTOS['ALL'];
-  urls.forEach((url,i)=>{
-    const img=document.createElement('img');
-    img.className='hero-img'+(i===0?' active':'');
-    img.src=url+IMG_PARAMS;
-    img.alt='';
-    hero.insertBefore(img,hero.firstChild);
-  });
-}
-function setHeroImage(code){
-  const imgs=document.querySelectorAll('.hero-img');
-  clearInterval(heroTimer);
-  if(code==='ALL'){
-    heroSlideIndex=0;
-    imgs.forEach((img,i)=>{img.className='hero-img'+(i===0?' active':'');img.src=HERO_PHOTOS.ALL[i]+IMG_PARAMS;});
-    heroTimer=setInterval(()=>{
-      heroSlideIndex=(heroSlideIndex+1)%imgs.length;
-      imgs.forEach((img,i)=>img.classList.toggle('active',i===heroSlideIndex));
-    },5000);
-  } else {
-    const urls=HERO_PHOTOS['ALL'];
-    const target=HERO_PHOTOS[code]||urls[0];
-    imgs.forEach((img,i)=>{
-      img.src=urls[i]+IMG_PARAMS;
-      img.classList.toggle('active',urls[i]===target||(i===0&&!HERO_PHOTOS[code]));
-    });
-    // make first matching active
-    let found=false;
-    imgs.forEach(img=>{
-      if(img.src.includes(HERO_PHOTOS[code]?.split('?')[0].split('/').pop())){img.classList.add('active');found=true;}
-      else img.classList.remove('active');
-    });
-    if(!found)imgs[0].classList.add('active');
-  }
+// ============================================================
+// HELPERS
+// ============================================================
+function t(key) {
+  return (UI_TEXT[key] && (UI_TEXT[key][currentLang] || UI_TEXT[key]['en'])) || key;
 }
 
-// --- HEADER SCROLL ---
-function initHeaderScroll(){
-  const header=document.getElementById('site-header');
-  const hero=document.getElementById('hero');
-  const obs=new IntersectionObserver(([e])=>{
-    header.className=e.isIntersecting?'transparent':'sticky';
-  },{threshold:0.05});
-  obs.observe(hero);
+function countryName(code) {
+  const map = COUNTRY_NAMES[currentLang] || COUNTRY_NAMES['en'];
+  return map[code] || code;
 }
 
-// --- HERO COUNTRY CARDS ---
-function buildHeroCountryCards(){
-  const container=document.getElementById('hero-countries');
-  container.innerHTML='';
-  // Only the 8 real countries (no ALL)
-  COUNTRIES.filter(c=>c.code!=='ALL').forEach(c=>{
-    const card=document.createElement('div');
-    card.className='country-card'+(c.code===currentCountry?' active':'');
-    card.id='hcard-'+c.code;
-    card.innerHTML=`
-      <span class="country-card-flag">${c.flag}</span>
-      <span class="country-card-name">${c[currentLang]}</span>
-      <span class="country-card-city">${COUNTRY_CITIES[c.code]||''}</span>
-    `;
-    card.onclick=()=>selectCountry(c.code);
-    container.appendChild(card);
-  });
-}
-function selectCountry(code){
-  currentCountry=code;
-  // update card active states
-  document.querySelectorAll('.country-card').forEach(el=>{
-    el.classList.toggle('active',el.id==='hcard-'+code);
-  });
-  setHeroImage(code);
-  renderCalendar();
-  renderUpcoming();
+function monthName(idx) {
+  const arr = MONTH_NAMES[currentLang] || MONTH_NAMES['en'];
+  return arr[idx];
 }
 
-// --- WEATHER ---
-function weatherIcon(code){
-  if(code===0)return'☀️';
-  if(code<=2)return'⛅';
-  if(code===3)return'☁️';
-  if(code<=48)return'🌫️';
-  if(code<=67)return'🌧️';
-  if(code<=77)return'❄️';
-  if(code<=82)return'🌦️';
-  return'⛈️';
-}
-async function fetchWeather(code){
-  const c=CITY_COORDS[code];
-  if(!c)return null;
-  try{
-    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto&forecast_days=4`);
-    const d=await r.json();
-    return d;
-  }catch(e){return null;}
-}
-async function loadAllWeather(){
-  const codes=COUNTRIES.filter(c=>c.code!=='ALL').map(c=>c.code);
-  await Promise.all(codes.map(async code=>{
-    const d=await fetchWeather(code);
-    if(d){weatherData[code]=d;}
-    updateMarketCard(code);
-  }));
+function weekdays() {
+  return WEEKDAY_SHORT[currentLang] || WEEKDAY_SHORT['en'];
 }
 
-// --- MARKET CARDS ---
-function getLocalTime(tz){
-  return new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:tz}).format(new Date());
-}
-function getNextHoliday(code,lang){
-  const today=new Date();today.setHours(0,0,0,0);
-  const all=[];
-  [2026,2027].forEach(yr=>{
-    const list=(HOLIDAYS_DATA[code]||{})[yr]||[];
-    list.forEach(h=>all.push({date:new Date(h.date),name:h.name[lang]||h.name.en}));
-  });
-  all.sort((a,b)=>a.date-b.date);
-  const next=all.find(h=>h.date>=today);
-  if(!next)return null;
-  const diff=Math.round((next.date-today)/(86400000));
-  const label={zh:'天后',en:' days',pt:' dias',ar:' أيام'};
-  if(diff===0)return{text:{zh:'今天 · '+next.name,en:'Today · '+next.name,pt:'Hoje · '+next.name,ar:'اليوم · '+next.name}[lang]};
-  if(diff===1)return{text:{zh:'明天 · '+next.name,en:'Tomorrow · '+next.name,pt:'Amanhã · '+next.name,ar:'غداً · '+next.name}[lang]};
-  return{text:diff+(label[lang]||' days')+' · '+next.name};
-}
-function buildMarketCards(){
-  const scroll=document.getElementById('markets-scroll');
-  scroll.innerHTML='';
-  const countries=COUNTRIES.filter(c=>c.code!=='ALL');
-  countries.forEach(c=>{
-    const card=document.createElement('div');
-    card.className='market-card';
-    card.id='market-card-'+c.code;
-    const nh=getNextHoliday(c.code,currentLang);
-    card.innerHTML=`
-      <div class="market-card-header">
-        <span class="market-flag">${c.flag}</span>
-        <span class="market-name">${c[currentLang]}</span>
-      </div>
-      <div class="market-time" id="time-${c.code}">${getLocalTime(CITY_COORDS[c.code].tz)}</div>
-      <div class="market-tz">${CITY_COORDS[c.code].tzLabel}</div>
-      <div class="market-divider"></div>
-      <div class="market-weather" id="weather-${c.code}">
-        <div class="market-weather-skeleton"></div>
-      </div>
-      ${nh?`<div class="market-holiday">🗓 ${nh.text}</div>`:''}
-    `;
-    scroll.appendChild(card);
-  });
-}
-function updateMarketCard(code){
-  const el=document.getElementById('weather-'+code);
-  if(!el)return;
-  const d=weatherData[code];
-  if(!d){el.innerHTML='<span style="color:var(--text2);font-size:13px">--°</span>';return;}
-  const cw=d.current_weather;
-  const daily=d.daily;
-  const icon=weatherIcon(cw.weathercode);
-  const temp=Math.round(cw.temperature);
-  // next 3 days (indices 1,2,3)
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  let forecastHtml='';
-  for(let i=1;i<=3;i++){
-    if(!daily||!daily.time[i])break;
-    const dt=new Date(daily.time[i]);
-    const dayName=days[dt.getDay()];
-    const ic=weatherIcon(daily.weathercode[i]);
-    const hi=Math.round(daily.temperature_2m_max[i]);
-    const lo=Math.round(daily.temperature_2m_min[i]);
-    forecastHtml+=`<div class="forecast-row"><span class="forecast-day">${dayName}</span><span class="forecast-icon">${ic}</span><span class="forecast-temps">${hi}°/${lo}°</span></div>`;
-  }
-  el.innerHTML=`
-    <div class="market-weather-main">
-      <span class="market-weather-icon">${icon}</span>
-      <span class="market-weather-temp">${temp}°</span>
-    </div>
-    <div class="market-weather-forecast">${forecastHtml}</div>
-  `;
+function getHolidayName(h) {
+  if (!h || !h.name) return '';
+  if (typeof h.name === 'string') return h.name;
+  return h.name[currentLang] || h.name['zh-TW'] || h.name['en'] || h.name['zh'] || '';
 }
 
-// Clock update
-setInterval(()=>{
-  COUNTRIES.filter(c=>c.code!=='ALL').forEach(c=>{
-    const el=document.getElementById('time-'+c.code);
-    if(el)el.textContent=getLocalTime(CITY_COORDS[c.code].tz);
-  });
-},1000);
+function parseDate(str) {
+  // str: "2026-01-01"
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
 
-// --- CALENDAR ---
-function getHolidayMap(year,filterCode){
-  const map={};
-  const codes=filterCode==='ALL'?COUNTRIES.filter(c=>c.code!=='ALL').map(c=>c.code):[filterCode];
-  codes.forEach(code=>{
-    const country=COUNTRIES.find(c=>c.code===code);
-    const list=(HOLIDAYS_DATA[code]||{})[year]||[];
-    list.forEach(h=>{
-      if(!map[h.date])map[h.date]=[];
-      map[h.date].push({name:h.name,code,color:country.color,flag:country.flag});
-    });
+function formatDateKey(y, m, d) {
+  return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+}
+
+function daysUntil(dateStr) {
+  const today = new Date();
+  const target = parseDate(dateStr);
+  today.setHours(0,0,0,0);
+  target.setHours(0,0,0,0);
+  return Math.round((target - today) / 86400000);
+}
+
+function getCountryColor(code) {
+  const c = COUNTRIES.find(x => x.code === code);
+  return c ? c.color : '#FF6900';
+}
+
+function getCountryFlag(code) {
+  const c = COUNTRIES.find(x => x.code === code);
+  return c ? c.flag : '';
+}
+
+// Build holiday lookup map from HOLIDAYS_DATA
+function buildHolidayMap(year, filterCode) {
+  // Returns: { "2026-01-01": [ {name, countries:[...], color} ] }
+  const map = {};
+  if (typeof HOLIDAYS_DATA === 'undefined') return map;
+  const list = HOLIDAYS_DATA[year] || HOLIDAYS_DATA[String(year)] || [];
+  list.forEach(h => {
+    if (filterCode && !h.countries.includes(filterCode)) return;
+    const key = h.date;
+    if (!map[key]) map[key] = [];
+    map[key].push(h);
   });
   return map;
 }
-function renderCalendar(){
-  const grid=document.getElementById('calendar-grid');
-  grid.innerHTML='';
-  const map=getHolidayMap(currentYear,currentCountry);
-  const today=new Date();
-  const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  for(let m=0;m<12;m++){
-    const card=document.createElement('div');
-    card.className='month-card';
-    const title=document.createElement('div');
-    title.className='month-title';
-    title.textContent=MONTH_NAMES[currentLang][m];
-    card.appendChild(title);
-    // weekdays
-    const wrow=document.createElement('div');
-    wrow.className='weekday-row';
-    WEEKDAY_SHORT[currentLang].forEach(d=>{
-      const cell=document.createElement('div');
-      cell.className='weekday-cell';
-      cell.textContent=d;
-      wrow.appendChild(cell);
+
+function getUpcomingHolidays(year, filterCode, limit) {
+  if (typeof HOLIDAYS_DATA === 'undefined') return [];
+  const list = HOLIDAYS_DATA[year] || HOLIDAYS_DATA[String(year)] || [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const upcoming = list
+    .filter(h => {
+      if (filterCode && !h.countries.includes(filterCode)) return false;
+      const d = parseDate(h.date); d.setHours(0,0,0,0);
+      return d >= today;
+    })
+    .sort((a,b) => a.date.localeCompare(b.date))
+    .slice(0, limit || 10);
+  return upcoming;
+}
+
+function getNextHoliday(code) {
+  const upcoming = getUpcomingHolidays(currentYear, code, 1);
+  return upcoming[0] || null;
+}
+
+// ============================================================
+// TIME CLOCK
+// ============================================================
+function getTimeInZone(tz) {
+  try {
+    const now = new Date();
+    const s = now.toLocaleString('en-US', {timeZone: tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+    return s;
+  } catch(e) { return '--:--:--'; }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  buildLangButtons();
+  buildYearSelect();
+  buildHeroSlides();
+  buildHeroCards();
+  buildMarkets();
+  buildCalendar('global');
+  buildUpcoming('global');
+  startSlideshow();
+  startClocks();
+  handleScroll();
+  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('hashchange', onHashChange);
+  onHashChange();
+});
+
+// ============================================================
+// LANGUAGE
+// ============================================================
+function buildLangButtons() {
+  const grp = document.getElementById('lang-group');
+  grp.innerHTML = '';
+  LANGS.forEach(lang => {
+    const btn = document.createElement('button');
+    btn.className = 'lang-btn' + (lang === currentLang ? ' active' : '');
+    btn.textContent = LANG_LABELS[lang];
+    btn.dataset.lang = lang;
+    btn.addEventListener('click', () => setLang(lang));
+    grp.appendChild(btn);
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang === 'zh-TW' ? 'zh-TW' : lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  buildLangButtons();
+  refreshAll();
+}
+
+// ============================================================
+// YEAR
+// ============================================================
+function buildYearSelect() {
+  const sel = document.getElementById('year-select');
+  sel.value = String(currentYear);
+  sel.addEventListener('change', () => {
+    currentYear = parseInt(sel.value);
+    refreshAll();
+  });
+}
+
+// ============================================================
+// REFRESH ALL
+// ============================================================
+function refreshAll() {
+  // back button label
+  const backLabel = document.getElementById('back-label');
+  if (backLabel) backLabel.textContent = UI_TEXT.allMarkets[currentLang]?.replace('← ','') || 'All Markets';
+  // hero subtitle
+  document.getElementById('hero-subtitle-text').textContent = t('subtitle');
+  // markets label
+  document.getElementById('markets-label').textContent = t('markets');
+  // rebuild hero cards text
+  buildHeroCards();
+  // rebuild markets
+  buildMarkets();
+  // rebuild calendar
+  buildCalendar('global');
+  buildUpcoming('global');
+  // labels
+  document.getElementById('cal-label-global').textContent = t('calendar') + ' ' + currentYear;
+  document.getElementById('upcoming-label-global').textContent = t('upcoming');
+
+  if (currentCountry) {
+    renderCountryPage(currentCountry);
+  }
+}
+
+// ============================================================
+// HERO SLIDESHOW
+// ============================================================
+function buildHeroSlides() {
+  const container = document.getElementById('hero-slides');
+  container.innerHTML = '';
+  ALL_PHOTOS.forEach((url, i) => {
+    const div = document.createElement('div');
+    div.className = 'hero-slide' + (i === 0 ? ' active' : '');
+    div.style.backgroundImage = `url(${url}${IMG_PARAMS})`;
+    container.appendChild(div);
+  });
+}
+
+function startSlideshow() {
+  if (slideInterval) clearInterval(slideInterval);
+  slideInterval = setInterval(() => {
+    const slides = document.querySelectorAll('#hero-slides .hero-slide');
+    if (!slides.length) return;
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 5000);
+}
+
+// ============================================================
+// HERO CARDS
+// ============================================================
+function buildHeroCards() {
+  const container = document.getElementById('hero-cards');
+  container.innerHTML = '';
+  COUNTRIES.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'country-card';
+    card.innerHTML = `
+      <span class="cc-flag">${c.flag}</span>
+      <span class="cc-name">${countryName(c.code)}</span>
+      <span class="cc-city">${CITY_INFO[c.code].city}</span>
+    `;
+    card.addEventListener('click', () => { location.hash = '#' + c.code; });
+    container.appendChild(card);
+  });
+}
+
+// ============================================================
+// MARKETS
+// ============================================================
+function buildMarkets() {
+  const container = document.getElementById('markets-scroll');
+  container.innerHTML = '';
+  COUNTRIES.forEach(c => {
+    const info = CITY_INFO[c.code];
+    const w = WEATHER_MOCK[c.code] || {icon:'🌡',temp:'--',unit:'°C',forecast:[]};
+    const nextHol = getNextHoliday(c.code);
+    const holText = nextHol
+      ? `🗓 ${getHolidayName(nextHol)} · ${nextHol.date}`
+      : '—';
+
+    const card = document.createElement('div');
+    card.className = 'market-card';
+    card.innerHTML = `
+      <div class="mc-header">
+        <span class="mc-flag">${c.flag}</span>
+        <div>
+          <div class="mc-country">${countryName(c.code)}</div>
+          <div class="mc-city">${info.city}</div>
+        </div>
+      </div>
+      <div class="mc-time" id="mc-time-${c.code}">--:--:--</div>
+      <div class="mc-tz">${info.tzLabel}</div>
+      <div class="mc-weather">
+        <span class="mc-weather-icon">${w.icon}</span>
+        <span class="mc-temp">${w.temp}${w.unit}</span>
+      </div>
+      <div class="mc-holiday">${holText}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// ============================================================
+// CLOCKS
+// ============================================================
+function startClocks() {
+  // Clear old
+  Object.values(clockIntervals).forEach(clearInterval);
+  clockIntervals = {};
+
+  function tick() {
+    COUNTRIES.forEach(c => {
+      const el = document.getElementById('mc-time-' + c.code);
+      if (el) el.textContent = getTimeInZone(CITY_INFO[c.code].tz);
     });
-    card.appendChild(wrow);
-    // days
-    const dgrid=document.createElement('div');
-    dgrid.className='days-grid';
-    const firstDay=new Date(currentYear,m,1).getDay();
-    const daysInMonth=new Date(currentYear,m+1,0).getDate();
-    for(let blank=0;blank<firstDay;blank++){
-      const empty=document.createElement('div');
-      dgrid.appendChild(empty);
+    // Country page clock
+    if (currentCountry) {
+      const cityEl = document.getElementById('city-time');
+      if (cityEl) cityEl.textContent = getTimeInZone(CITY_INFO[currentCountry].tz);
     }
-    for(let d=1;d<=daysInMonth;d++){
-      const dateStr=`${currentYear}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const holidays=map[dateStr]||[];
-      const dow=new Date(currentYear,m,d).getDay();
-      const isWeekend=dow===0||dow===6;
-      const isToday=dateStr===todayStr;
-      const cell=document.createElement('div');
-      cell.className='day-cell';
-      if(isWeekend&&!holidays.length)cell.classList.add('is-weekend');
-      if(isToday)cell.classList.add('is-today');
-      if(holidays.length){
-        cell.classList.add('has-holiday');
-        cell.style.borderLeftColor=holidays[0].color;
-      }
-      if(isToday){
-        const ring=document.createElement('div');
-        ring.className='today-ring';
-        cell.appendChild(ring);
-      }
-      const num=document.createElement('div');
-      num.className='day-number';
-      num.textContent=d;
-      cell.appendChild(num);
-      if(holidays.length){
-        const dots=document.createElement('div');
-        dots.className='day-dots';
-        holidays.slice(0,4).forEach(h=>{
-          const dot=document.createElement('div');
-          dot.className='day-dot';
-          dot.style.background=h.color;
-          dots.appendChild(dot);
-        });
-        cell.appendChild(dots);
-        // tooltip
-        const tip=document.createElement('div');
-        tip.className='day-tooltip';
-        holidays.forEach(h=>{
-          const item=document.createElement('div');
-          item.className='tooltip-item';
-          item.innerHTML=`<span class="tooltip-flag">${h.flag}</span><span class="tooltip-name">${h.name[currentLang]||h.name.en}</span>`;
-          tip.appendChild(item);
-        });
-        cell.appendChild(tip);
-      }
-      dgrid.appendChild(cell);
-    }
-    card.appendChild(dgrid);
+  }
+  tick();
+  clockIntervals['main'] = setInterval(tick, 1000);
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function buildCalendar(mode, filterCode) {
+  // mode = 'global' | 'country'
+  const gridId = mode === 'global' ? 'calendar-grid-global' : 'calendar-grid-country';
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const today = new Date();
+  const holidayMap = buildHolidayMap(currentYear, filterCode || null);
+
+  for (let m = 0; m < 12; m++) {
+    const card = buildMonthCard(currentYear, m, today, holidayMap, filterCode);
     grid.appendChild(card);
   }
 }
 
-// --- UPCOMING ---
-function renderUpcoming(){
-  const list=document.getElementById('upcoming-list');
-  list.innerHTML='';
-  const today=new Date();today.setHours(0,0,0,0);
-  const all=[];
-  const codes=currentCountry==='ALL'?COUNTRIES.filter(c=>c.code!=='ALL').map(c=>c.code):[currentCountry];
-  codes.forEach(code=>{
-    const country=COUNTRIES.find(c=>c.code===code);
-    [2026,2027].forEach(yr=>{
-      const hlist=(HOLIDAYS_DATA[code]||{})[yr]||[];
-      hlist.forEach(h=>{
-        const dt=new Date(h.date);
-        if(dt>=today)all.push({date:dt,dateStr:h.date,name:h.name,country});
-      });
-    });
+function buildMonthCard(year, month, today, holidayMap, filterCode) {
+  const card = document.createElement('div');
+  card.className = 'month-card';
+
+  const title = document.createElement('div');
+  title.className = 'month-title';
+  title.textContent = monthName(month) + ' ' + year;
+  card.appendChild(title);
+
+  // Weekday headers
+  const wdRow = document.createElement('div');
+  wdRow.className = 'cal-weekdays';
+  weekdays().forEach(wd => {
+    const d = document.createElement('div');
+    d.className = 'cal-wd';
+    d.textContent = wd;
+    wdRow.appendChild(d);
   });
-  all.sort((a,b)=>a.date-b.date);
-  all.slice(0,15).forEach(h=>{
-    const item=document.createElement('div');
-    item.className='upcoming-item';
-    const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-    if(h.dateStr===todayStr)item.classList.add('today');
-    const bar=document.createElement('div');
-    bar.className='upcoming-bar';
-    bar.style.background=h.country.color;
-    const flag=document.createElement('span');
-    flag.className='upcoming-flag';
-    flag.textContent=h.country.flag;
-    const info=document.createElement('div');
-    info.className='upcoming-info';
-    const dateEl=document.createElement('div');
-    dateEl.className='upcoming-date';
-    dateEl.textContent=h.date.toLocaleDateString(currentLang==='zh'?'zh-CN':currentLang==='pt'?'pt-BR':currentLang==='ar'?'ar-SA':'en-US',{month:'short',day:'numeric'});
-    const nameEl=document.createElement('div');
-    nameEl.className='upcoming-name';
-    nameEl.textContent=h.name[currentLang]||h.name.en;
-    info.appendChild(dateEl);
-    info.appendChild(nameEl);
-    item.appendChild(bar);
-    item.appendChild(flag);
-    item.appendChild(info);
+  card.appendChild(wdRow);
+
+  // Days
+  const daysGrid = document.createElement('div');
+  daysGrid.className = 'cal-days';
+
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    daysGrid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayEl = document.createElement('div');
+    const key = formatDateKey(year, month, d);
+    const dow = new Date(year, month, d).getDay();
+    const isToday = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
+    const holidays = holidayMap[key] || [];
+    const isWeekend = (dow === 0 || dow === 6);
+
+    let classes = 'cal-day';
+    if (isToday) classes += ' today';
+    else if (isWeekend) classes += ' weekend';
+    if (holidays.length > 0 && !isToday) classes += ' holiday';
+
+    dayEl.className = classes;
+
+    if (isToday) {
+      dayEl.textContent = d;
+    } else if (holidays.length > 0) {
+      // Determine dominant color
+      let color = getCountryColor(holidays[0].countries[0]);
+      if (filterCode) color = getCountryColor(filterCode);
+
+      dayEl.style.color = color;
+      dayEl.innerHTML = `<span>${d}</span>`;
+      dayEl.style.setProperty('--hol-color', color);
+      dayEl.querySelector('span').style.position = 'relative';
+
+      // Left border via before
+      dayEl.style.cssText += `position:relative;`;
+
+      // Add dot
+      const dot = document.createElement('span');
+      dot.className = 'holiday-dot';
+      dot.style.background = color;
+      dayEl.appendChild(dot);
+
+      // Left line
+      dayEl.style.borderLeft = `3px solid ${color}`;
+      dayEl.style.paddingLeft = '4px';
+      dayEl.style.borderRadius = '0 6px 6px 0';
+
+      // Tooltip
+      const tt = document.createElement('div');
+      tt.className = 'tooltip';
+      const names = holidays.map(h => getHolidayName(h)).filter(Boolean).join(' / ');
+      const flags = holidays.map(h => h.countries.map(getCountryFlag).join('')).join(' ');
+      tt.innerHTML = `<div class="tooltip-name">${names}</div><div class="tooltip-date">${key}</div><div class="tooltip-flags">${flags}</div>`;
+      dayEl.appendChild(tt);
+    } else {
+      dayEl.textContent = d;
+    }
+
+    daysGrid.appendChild(dayEl);
+  }
+
+  card.appendChild(daysGrid);
+  return card;
+}
+
+// ============================================================
+// UPCOMING
+// ============================================================
+function buildUpcoming(mode, filterCode) {
+  const listId = mode === 'global' ? 'upcoming-list-global' : 'upcoming-list-country';
+  const list = document.getElementById(listId);
+  if (!list) return;
+  list.innerHTML = '';
+
+  const upcoming = getUpcomingHolidays(currentYear, filterCode || null, 12);
+
+  if (!upcoming.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:16px 0">—</div>';
+    return;
+  }
+
+  upcoming.forEach(h => {
+    const du = daysUntil(h.date);
+    if (du < 0) return;
+    const color = filterCode ? getCountryColor(filterCode) : getCountryColor(h.countries[0]);
+    const flags = h.countries.map(getCountryFlag).join(' ');
+
+    const item = document.createElement('div');
+    item.className = 'upcoming-item';
+    item.innerHTML = `
+      <div class="ui-dot" style="background:${color}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="ui-name">${getHolidayName(h)}</div>
+        <div class="ui-meta">${h.date} · ${flags}</div>
+      </div>
+      <div>
+        <div class="ui-days">${du}</div>
+        <div class="ui-days-label">${t('days')}</div>
+      </div>
+    `;
     list.appendChild(item);
   });
 }
 
-// --- LANGUAGE / YEAR ---
-function applyLang(){
-  document.documentElement.lang=currentLang;
-  document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
-  document.getElementById('hero-title').textContent=HERO_TITLES[currentLang];
-  buildHeroCountryCards();
-  buildMarketCards();
-  loadAllWeather();
-  renderCalendar();
-  renderUpcoming();
+// ============================================================
+// HASH ROUTING
+// ============================================================
+function onHashChange() {
+  const hash = location.hash.replace('#', '').toUpperCase();
+  const validCodes = COUNTRIES.map(c => c.code);
+
+  if (hash && validCodes.includes(hash)) {
+    showCountryPage(hash);
+  } else {
+    showGlobalPage();
+  }
 }
 
-document.getElementById('lang-select').addEventListener('change',e=>{currentLang=e.target.value;applyLang();});
-document.getElementById('year-select').addEventListener('change',e=>{currentYear=+e.target.value;renderCalendar();renderUpcoming();});
+function showGlobalPage() {
+  currentCountry = null;
+  document.getElementById('view-global').style.display = 'block';
+  document.getElementById('view-country').style.display = 'none';
+  document.getElementById('back-btn').style.display = 'none';
+  document.getElementById('view-global').classList.add('fade-in');
+  refreshAll();
+  window.scrollTo({top:0,behavior:'instant'});
+}
 
-// --- INIT ---
-buildHeroImages();
-setHeroImage('ALL');
-initHeaderScroll();
-buildHeroCountryCards();
-buildMarketCards();
-loadAllWeather();
-renderCalendar();
-renderUpcoming();
+function showCountryPage(code) {
+  currentCountry = code;
+  document.getElementById('view-global').style.display = 'none';
+  document.getElementById('view-country').style.display = 'block';
+  const backBtn = document.getElementById('back-btn');
+  backBtn.style.display = 'flex';
+  backBtn.onclick = () => { location.hash = ''; };
+  document.getElementById('view-country').classList.add('fade-in');
+  renderCountryPage(code);
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function renderCountryPage(code) {
+  const info = CITY_INFO[code];
+  const c = COUNTRIES.find(x => x.code === code);
+  const w = WEATHER_MOCK[code] || {icon:'🌡',temp:'--',unit:'°C',forecast:[]};
+
+  // Hero
+  const bg = document.getElementById('country-hero-bg');
+  bg.style.backgroundImage = `url(${HERO_PHOTOS[code]}${IMG_PARAMS})`;
+
+  const enName = COUNTRY_NAMES['en'][code] || code;
+  document.getElementById('country-title').textContent = enName;
+  document.getElementById('country-subtitle').textContent = info.city;
+
+  // City card
+  document.getElementById('city-flag').textContent = c.flag;
+  document.getElementById('city-country-name').textContent = countryName(code);
+  document.getElementById('city-city-name').textContent = info.city;
+  document.getElementById('city-time').textContent = getTimeInZone(info.tz);
+  document.getElementById('city-tz').textContent = info.tzLabel;
+  document.getElementById('city-temp').textContent = w.icon + ' ' + w.temp + w.unit;
+
+  // Forecast
+  const fcEl = document.getElementById('city-forecast');
+  fcEl.innerHTML = '';
+  (w.forecast || []).forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'forecast-row';
+    row.innerHTML = `<span>${f.day}</span><span>${f.icon}</span><span>${f.hi}° / ${f.lo}°</span>`;
+    fcEl.appendChild(row);
+  });
+
+  // Next holiday
+  const nextHol = getNextHoliday(code);
+  const footerEl = document.getElementById('city-next-holiday');
+  if (nextHol) {
+    footerEl.textContent = t('nextHol') + getHolidayName(nextHol) + ' · ' + nextHol.date;
+  } else {
+    footerEl.textContent = '';
+  }
+
+  // Calendar & Upcoming
+  buildCalendar('country', code);
+  buildUpcoming('country', code);
+
+  // Labels
+  document.getElementById('cal-label-country').textContent = t('calendar') + ' ' + currentYear;
+  document.getElementById('upcoming-label-country').textContent = t('upcoming');
+}
+
+// ============================================================
+// SCROLL
+// ============================================================
+function handleScroll() {
+  const header = document.getElementById('site-header');
+  const scrollBtn = document.getElementById('scroll-top');
+  const y = window.scrollY;
+
+  if (y > 80) {
+    header.classList.remove('transparent');
+    header.classList.add('solid');
+  } else {
+    header.classList.remove('solid');
+    header.classList.add('transparent');
+  }
+
+  if (y > 400) scrollBtn.classList.add('visible');
+  else scrollBtn.classList.remove('visible');
+}
+
 </script>
 </body>
 </html>
