@@ -87,39 +87,107 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);overflo
   font-family:var(--font-baskerville);font-style:italic;
   font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:1px;
 }
+/* ── Hero bottom bar ── */
 .hero-cards{
   position:absolute;bottom:0;left:0;right:0;z-index:2;
-  display:flex;flex-direction:row;gap:0;
-  width:100%;
-  background:rgba(0,0,0,0.45);
-  backdrop-filter:blur(18px);
-  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;flex-direction:row;gap:0;width:100%;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.02),rgba(0,0,0,0.55));
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  border-top:1px solid rgba(255,255,255,0.13);
 }
+
+/* ── Country card (glassmorphism) ── */
 .country-card{
   flex:1;min-width:0;
-  background:transparent;
+  background:linear-gradient(160deg,rgba(255,255,255,0.05) 0%,rgba(0,0,0,0.08) 100%);
   border:none;
   border-right:1px solid rgba(255,255,255,0.07);
   border-radius:0;
-  padding:14px 8px 12px;cursor:pointer;text-align:center;
-  transition:all .25s;overflow:hidden;position:relative;
+  padding:18px 10px 16px;
+  cursor:pointer;text-align:center;
+  transition:background .3s, transform .3s cubic-bezier(.22,.68,0,1.2);
+  overflow:hidden;position:relative;
 }
 .country-card:last-child{border-right:none}
+
+/* shimmer sweep on hover */
+.country-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.07) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform .55s ease;
+  pointer-events:none;
+}
+.country-card:hover::before{transform:translateX(100%)}
+
+/* color accent line – bottom, expands from center */
 .country-card::after{
-  content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;
-  background:linear-gradient(to right,transparent,rgba(255,255,255,0.08),transparent);
-  transform:skewX(-20deg);transition:left .5s;
+  content:'';
+  position:absolute;bottom:0;left:50%;right:50%;
+  height:2px;
+  background:var(--cc-accent,#FF6900);
+  transition:left .3s ease,right .3s ease;
 }
-.country-card:hover::after{left:125%}
+.country-card:hover::after,.country-card.active::after{left:0;right:0}
+
 .country-card:hover{
-  background:rgba(255,255,255,0.07);
-  transform:none;
+  background:linear-gradient(160deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.03) 100%);
+  transform:translateY(-5px);
 }
-.country-card.active{background:rgba(255,255,255,0.12);border-bottom:2px solid var(--orange);}
-.cc-flag{font-size:20px;display:block;margin-bottom:3px}
-.cc-name{font-size:10px;font-weight:600;color:white;letter-spacing:.4px;display:block}
-.cc-time{font-size:13px;font-family:'Courier New',monospace;color:rgba(255,255,255,0.9);display:block;margin-top:3px;letter-spacing:.5px}
-.cc-weather{font-size:10px;color:rgba(255,255,255,0.5);display:block;margin-top:2px}
+.country-card.active{
+  background:linear-gradient(160deg,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0.04) 100%);
+}
+
+/* ── Card inner elements ── */
+.cc-flag{font-size:22px;display:block;margin-bottom:5px;
+  transition:transform .3s cubic-bezier(.22,.68,0,1.4);
+}
+.country-card:hover .cc-flag{transform:scale(1.2)}
+.cc-name{
+  font-size:10px;font-weight:700;color:rgba(255,255,255,0.85);
+  letter-spacing:.6px;text-transform:uppercase;display:block;
+}
+.cc-city{font-size:9px;color:rgba(255,255,255,0.35);font-style:italic;display:block;margin-top:1px}
+
+/* digit-flip clock */
+.cc-time{
+  display:flex;justify-content:center;align-items:center;gap:1px;
+  margin:7px 0 4px;height:18px;overflow:hidden;
+}
+.cc-digit{
+  display:inline-block;font-family:'Courier New',monospace;
+  font-size:14px;line-height:18px;color:rgba(255,255,255,0.95);
+  letter-spacing:0;position:relative;
+  transition:none;
+}
+.cc-sep{font-family:'Courier New',monospace;font-size:14px;color:rgba(255,255,255,0.4);line-height:18px}
+.cc-digit.flip{animation:digitFlip .22s ease forwards}
+@keyframes digitFlip{
+  0%  {transform:translateY(0);opacity:1}
+  40% {transform:translateY(-14px);opacity:0}
+  41% {transform:translateY(14px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+
+/* weather */
+.cc-weather{
+  display:flex;justify-content:center;align-items:center;gap:4px;
+  font-size:10px;color:rgba(255,255,255,0.55);
+}
+.cc-wicon{
+  display:inline-block;font-size:13px;
+  transition:transform .4s cubic-bezier(.22,.68,0,1.4);
+}
+.country-card:hover .cc-wicon{transform:scale(1.25) rotate(-8deg)}
+.cc-temp{
+  font-size:11px;font-weight:600;color:rgba(255,255,255,0.75);
+  transition:color .4s;
+}
+.cc-temp.flash{animation:tempFlash .45s ease forwards}
+@keyframes tempFlash{
+  0%  {color:var(--orange)}
+  100%{color:rgba(255,255,255,0.75)}
+}
 
 /* ===== HERO COUNTRY ===== */
 #hero-country{
@@ -556,9 +624,16 @@ async function fetchWeather(code) {
       });
     }
     WEATHER_MOCK[code] = { icon, temp, unit:'°C', forecast };
-    // Update hero card
-    const hcWeather = document.querySelector(`#hero-cards .country-card:nth-child(${COUNTRIES.findIndex(c=>c.code===code)+1}) .cc-weather`);
-    if (hcWeather) hcWeather.textContent = `${icon} ${temp}°C`;
+    // Update hero card weather
+    const hcIcon = document.querySelector(`#hc-time-${code}`)?.parentElement?.querySelector('.cc-wicon');
+    const hcTemp = document.getElementById(`hc-temp-${code}`);
+    if (hcIcon) hcIcon.textContent = icon;
+    if (hcTemp) {
+      hcTemp.textContent = `${temp}°C`;
+      hcTemp.classList.remove('flash');
+      void hcTemp.offsetWidth;
+      hcTemp.classList.add('flash');
+    }
     // Update market card
     const mcIcon = document.querySelector(`#mc-time-${code}`)?.parentElement?.querySelector('.mc-weather-icon');
     const mcTemp = document.querySelector(`#mc-time-${code}`)?.parentElement?.querySelector('.mc-temp');
@@ -801,19 +876,33 @@ function startSlideshow() {
 // ============================================================
 // HERO CARDS
 // ============================================================
+function makeDigitSpans(timeStr) {
+  // timeStr = "HH:MM:SS", returns HTML for digit-flip display
+  return timeStr.split('').map((ch,i) => {
+    if (ch === ':') return `<span class="cc-sep">:</span>`;
+    return `<span class="cc-digit" data-pos="${i}">${ch}</span>`;
+  }).join('');
+}
+
 function buildHeroCards() {
   const container = document.getElementById('hero-cards');
   container.innerHTML = '';
   COUNTRIES.forEach(c => {
     const info = CITY_INFO[c.code];
     const w = WEATHER_MOCK[c.code] || {icon:'🌡',temp:'--',unit:'°C'};
+    const timeNow = getTimeInZone(info.tz);
     const card = document.createElement('div');
     card.className = 'country-card';
+    card.style.setProperty('--cc-accent', c.color);
     card.innerHTML = `
       <span class="cc-flag">${c.flag}</span>
       <span class="cc-name">${countryName(c.code)}</span>
-      <span class="cc-time" id="hc-time-${c.code}">--:--</span>
-      <span class="cc-weather">${w.icon} ${w.temp}${w.unit}</span>
+      <span class="cc-city">${info.city}</span>
+      <div class="cc-time" id="hc-time-${c.code}">${makeDigitSpans(timeNow)}</div>
+      <div class="cc-weather">
+        <span class="cc-wicon">${w.icon}</span>
+        <span class="cc-temp" id="hc-temp-${c.code}">${w.temp}${w.unit}</span>
+      </div>
     `;
     card.addEventListener('click', () => { location.hash = '#' + c.code; });
     container.appendChild(card);
@@ -868,12 +957,24 @@ function startClocks() {
     COUNTRIES.forEach(c => {
       const tz = CITY_INFO[c.code].tz;
       const t = getTimeInZone(tz);
-      // market cards
+      // market cards (legacy, hidden but keep)
       const el = document.getElementById('mc-time-' + c.code);
       if (el) el.textContent = t;
-      // hero bottom cards (show HH:MM only)
+      // hero digit-flip
       const hc = document.getElementById('hc-time-' + c.code);
-      if (hc) hc.textContent = t.slice(0,5);
+      if (hc) {
+        const digits = hc.querySelectorAll('.cc-digit');
+        t.split('').forEach((ch, i) => {
+          // pos in "HH:MM:SS" → digit index offset by separators
+          const d = hc.querySelector(`.cc-digit[data-pos="${i}"]`);
+          if (d && d.textContent !== ch) {
+            d.textContent = ch;
+            d.classList.remove('flip');
+            void d.offsetWidth; // reflow
+            d.classList.add('flip');
+          }
+        });
+      }
     });
     // Country page clock
     if (currentCountry) {
