@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Keeta Global Calendar</title>
+<title>Keeta Global Time</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -13,6 +13,7 @@
   --text:rgba(255,255,255,0.9);--text2:rgba(255,255,255,0.5);--text3:rgba(255,255,255,0.25);
   --border:rgba(255,255,255,0.07);--orange:#FF6900;
   --font-serif:'Playfair Display',Georgia,serif;
+  --font-baskerville:'Libre Baskerville',Georgia,serif;
   --font-sans:'Inter',-apple-system,sans-serif;
 }
 html{scroll-behavior:smooth}
@@ -29,25 +30,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-hei
 .header-select option{background:#1a1a1a;color:white}
 
 /* HERO */
-#hero{position:relative;width:100%;height:100vh;min-height:600px;overflow:hidden;background:#000}
-.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.9s ease}
+#hero{position:relative;width:100%;height:100vh;min-height:700px;overflow:hidden;background:#000}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease}
 .hero-img.active{opacity:1}
-.hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.25) 0%,transparent 25%,transparent 55%,rgba(0,0,0,0.88) 100%);z-index:2;pointer-events:none}
-.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;text-align:center;padding:0 24px;margin-top:-40px}
-.hero-title{font-family:var(--font-serif);font-size:clamp(52px,8vw,110px);font-weight:700;color:white;text-shadow:0 4px 40px rgba(0,0,0,0.5);line-height:1.05;letter-spacing:-0.02em}
-.hero-subtitle{margin-top:20px;font-family:var(--font-serif);font-size:14px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.35em;text-transform:uppercase}
-.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;animation:scrollBounce 2s ease-in-out infinite}
-.hero-scroll-ring{width:36px;height:36px;border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.hero-scroll-arrow{width:8px;height:8px;border-right:1.5px solid rgba(255,255,255,0.7);border-bottom:1.5px solid rgba(255,255,255,0.7);transform:rotate(45deg);margin-top:-3px}
-@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
-.hero-credit{position:absolute;bottom:16px;right:20px;z-index:3;font-size:10px;color:rgba(255,255,255,0.25);font-family:var(--font-sans)}
+.hero-gradient{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.05) 30%,rgba(0,0,0,0.35) 60%,rgba(0,0,0,0.82) 100%);z-index:2;pointer-events:none}
+.hero-content{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:clamp(100px,16vh,160px);z-index:3;text-align:center;padding-left:24px;padding-right:24px}
+.hero-title{font-family:var(--font-serif);font-size:clamp(60px,9vw,130px);font-weight:900;color:white;text-shadow:0 2px 32px rgba(0,0,0,0.4);line-height:0.95;letter-spacing:-0.03em}
+.hero-subtitle{margin-top:18px;font-family:var(--font-baskerville);font-size:13px;font-style:italic;font-weight:400;color:rgba(255,255,255,0.55);letter-spacing:0.05em}
 
-/* COUNTRY BAR */
-#country-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 48px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
-#country-bar::-webkit-scrollbar{display:none}
-.country-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 20px;border-radius:100px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-family:var(--font-sans);font-size:13px;font-weight:400;color:rgba(255,255,255,0.6);background:transparent;transition:background .2s,color .2s,border-color .2s;margin-right:8px;white-space:nowrap;vertical-align:middle}
-.country-chip:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85)}
-.country-chip.active{background:white;color:#0A0A0A;border-color:white;font-weight:500}
+/* COUNTRY CARDS ON HERO */
+.hero-countries{position:absolute;bottom:0;left:0;right:0;z-index:4;padding:0 40px 40px;display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.country-card{position:relative;background:rgba(0,0,0,0.38);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:18px 14px 16px;cursor:pointer;transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;overflow:hidden;text-align:center}
+.country-card::before{content:'';position:absolute;inset:0;border-radius:14px;background:radial-gradient(circle at 50% 0%,rgba(255,255,255,0.12) 0%,transparent 65%);opacity:0;transition:opacity .3s}
+.country-card:hover::before{opacity:1}
+.country-card:hover{background:rgba(0,0,0,0.52);border-color:rgba(255,255,255,0.35);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5)}
+.country-card.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 1px rgba(255,255,255,0.25),0 8px 32px rgba(0,0,0,0.4)}
+.country-card-flag{font-size:26px;line-height:1;display:block;margin-bottom:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4))}
+.country-card-name{font-family:var(--font-serif);font-size:13px;font-weight:700;color:white;line-height:1.2;display:block}
+.country-card-city{font-family:var(--font-baskerville);font-size:10px;font-style:italic;color:rgba(255,255,255,0.5);display:block;margin-top:4px;line-height:1.3}
+/* shimmer sweep on hover */
+.country-card::after{content:'';position:absolute;top:-50%;left:-75%;width:50%;height:200%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.07),transparent);transform:skewX(-20deg);transition:left .5s ease}
+.country-card:hover::after{left:125%}
+
+.hero-scroll{position:absolute;bottom:160px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;animation:scrollBounce 2s ease-in-out infinite;opacity:0.7}
+.hero-scroll-ring{width:34px;height:34px;border:1.5px solid rgba(255,255,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.hero-scroll-arrow{width:7px;height:7px;border-right:1.5px solid rgba(255,255,255,0.8);border-bottom:1.5px solid rgba(255,255,255,0.8);transform:rotate(45deg);margin-top:-3px}
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.hero-credit{position:absolute;bottom:16px;right:20px;z-index:3;font-size:10px;color:rgba(255,255,255,0.22);font-family:var(--font-sans)}
+
+/* (country bar removed — using hero cards) */
 
 /* MARKETS SECTION */
 #markets-section{background:#0F0F0F;padding:40px 48px}
@@ -116,16 +127,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-hei
 .upcoming-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;margin-top:1px}
 
 /* RESPONSIVE */
+@media(max-width:1200px){
+  .hero-countries{grid-template-columns:repeat(4,1fr);gap:8px;padding:0 24px 32px}
+  .hero-scroll{bottom:220px}
+}
 @media(max-width:768px){
   #site-header{padding:0 20px;height:56px}
-  #country-bar{padding:14px 20px}
   #markets-section{padding:28px 20px}
   #calendar-area{padding:28px 20px 48px}
   #sidebar{display:none}
-  .hero-title{font-size:clamp(38px,10vw,64px)}
+  .hero-title{font-size:clamp(44px,12vw,72px)}
+  .hero-countries{grid-template-columns:repeat(4,1fr);gap:6px;padding:0 16px 24px}
+  .country-card{padding:14px 10px 12px}
+  .country-card-flag{font-size:22px}
+  .country-card-name{font-size:11px}
+  .country-card-city{display:none}
+  .hero-scroll{bottom:185px}
 }
 @media(max-width:480px){
   .calendar-grid{grid-template-columns:1fr}
+  .hero-countries{grid-template-columns:repeat(4,1fr);gap:5px;padding:0 12px 20px}
 }
 </style>
 </head>
@@ -152,17 +173,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-hei
 <section id="hero">
   <div class="hero-gradient"></div>
   <div class="hero-content">
-    <h1 class="hero-title" id="hero-title">Keeta 全球日历</h1>
-    <p class="hero-subtitle" id="hero-subtitle">全部市场</p>
+    <h1 class="hero-title" id="hero-title">Keeta Global Time</h1>
+    <p class="hero-subtitle" id="hero-subtitle">Holidays · Weather · Timezone · 8 Markets</p>
   </div>
-  <div class="hero-scroll" onclick="document.getElementById('country-bar').scrollIntoView({behavior:'smooth'})">
+  <div class="hero-countries" id="hero-countries"></div>
+  <div class="hero-scroll" onclick="document.getElementById('markets-section').scrollIntoView({behavior:'smooth'})">
     <div class="hero-scroll-ring"><div class="hero-scroll-arrow"></div></div>
   </div>
   <div class="hero-credit">Photo: Unsplash</div>
 </section>
-
-<!-- COUNTRY BAR -->
-<div id="country-bar"></div>
 
 <!-- MARKETS -->
 <section id="markets-section">
@@ -237,7 +256,8 @@ const WEEKDAY_SHORT={
   pt:['Do','Se','Te','Qu','Qu','Se','Sá'],
   ar:['أح','إث','ثل','أر','خم','جم','سب'],
 };
-const HERO_TITLES={zh:'Keeta 全球日历',en:'Keeta Global Calendar',pt:'Calendário Global Keeta',ar:'تقويم كيتا العالمي'};
+const HERO_TITLES={zh:'Keeta Global Time',en:'Keeta Global Time',pt:'Keeta Global Time',ar:'Keeta Global Time'};
+const COUNTRY_CITIES={CN:'Beijing',BR:'Rio de Janeiro',HK:'Hong Kong',SA:'Riyadh',AE:'Dubai',QA:'Doha',KW:'Kuwait City',BH:'Manama'};
 
 // State
 let currentLang='zh', currentYear=2026, currentCountry='ALL';
@@ -294,25 +314,31 @@ function initHeaderScroll(){
   obs.observe(hero);
 }
 
-// --- COUNTRY BAR ---
-function buildCountryBar(){
-  const bar=document.getElementById('country-bar');
-  bar.innerHTML='';
-  COUNTRIES.forEach(c=>{
-    const chip=document.createElement('button');
-    chip.className='country-chip'+(c.code===currentCountry?' active':'');
-    chip.innerHTML=`<span>${c.flag}</span><span>${c[currentLang]}</span>`;
-    chip.onclick=()=>selectCountry(c.code);
-    bar.appendChild(chip);
+// --- HERO COUNTRY CARDS ---
+function buildHeroCountryCards(){
+  const container=document.getElementById('hero-countries');
+  container.innerHTML='';
+  // Only the 8 real countries (no ALL)
+  COUNTRIES.filter(c=>c.code!=='ALL').forEach(c=>{
+    const card=document.createElement('div');
+    card.className='country-card'+(c.code===currentCountry?' active':'');
+    card.id='hcard-'+c.code;
+    card.innerHTML=`
+      <span class="country-card-flag">${c.flag}</span>
+      <span class="country-card-name">${c[currentLang]}</span>
+      <span class="country-card-city">${COUNTRY_CITIES[c.code]||''}</span>
+    `;
+    card.onclick=()=>selectCountry(c.code);
+    container.appendChild(card);
   });
 }
 function selectCountry(code){
   currentCountry=code;
-  buildCountryBar();
+  // update card active states
+  document.querySelectorAll('.country-card').forEach(el=>{
+    el.classList.toggle('active',el.id==='hcard-'+code);
+  });
   setHeroImage(code);
-  const sub=document.getElementById('hero-subtitle');
-  const c=COUNTRIES.find(x=>x.code===code);
-  sub.textContent=c?c[currentLang]:'';
   renderCalendar();
   renderUpcoming();
 }
@@ -577,9 +603,7 @@ function applyLang(){
   document.documentElement.lang=currentLang;
   document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
   document.getElementById('hero-title').textContent=HERO_TITLES[currentLang];
-  const selC=COUNTRIES.find(c=>c.code===currentCountry);
-  document.getElementById('hero-subtitle').textContent=selC?selC[currentLang]:'';
-  buildCountryBar();
+  buildHeroCountryCards();
   buildMarketCards();
   loadAllWeather();
   renderCalendar();
@@ -593,7 +617,7 @@ document.getElementById('year-select').addEventListener('change',e=>{currentYear
 buildHeroImages();
 setHeroImage('ALL');
 initHeaderScroll();
-buildCountryBar();
+buildHeroCountryCards();
 buildMarketCards();
 loadAllWeather();
 renderCalendar();
